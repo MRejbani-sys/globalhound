@@ -1,0 +1,1903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GlobalHound — Your Passport to Global Opportunity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ===== RESET & VARIABLES ===== */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-primary: #080D1A;
+    --bg-secondary: #0E1528;
+    --bg-card: #131C30;
+    --bg-card-hover: #192238;
+    --gold: #C9A84C;
+    --gold-light: #E2C06A;
+    --gold-dim: rgba(201,168,76,0.15);
+    --white: #F4F4F0;
+    --text-muted: #7A8BA0;
+    --text-dim: #4A5568;
+    --border: rgba(201,168,76,0.2);
+    --border-dim: rgba(255,255,255,0.06);
+    --green: #2DD4BF;
+    --blue: #60A5FA;
+    --red: #F87171;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'DM Sans', sans-serif;
+    --radius: 12px;
+    --shadow: 0 8px 40px rgba(0,0,0,0.5);
+    --transition: all 0.25s ease;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg-primary);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== PAGE SYSTEM ===== */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: block; }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-primary); }
+  ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 3px; }
+
+  /* ===== NAVBAR ===== */
+  .navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 68px;
+    background: rgba(8,13,26,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-dim);
+    transition: var(--transition);
+  }
+
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer; text-decoration: none;
+  }
+
+  .nav-logo svg { width: 32px; height: 32px; }
+
+  .nav-logo-text {
+    font-family: var(--font-display);
+    font-size: 22px; font-weight: 700;
+    color: var(--white); letter-spacing: 0.3px;
+  }
+
+  .nav-logo-text span { color: var(--gold); }
+
+  .nav-links {
+    display: flex; align-items: center; gap: 6px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--text-muted); text-decoration: none;
+    font-size: 14px; font-weight: 500;
+    padding: 8px 14px; border-radius: 8px;
+    transition: var(--transition); cursor: pointer;
+    display: block;
+  }
+
+  .nav-links a:hover, .nav-links a.active {
+    color: var(--white); background: rgba(255,255,255,0.06);
+  }
+
+  .nav-actions { display: flex; align-items: center; gap: 12px; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 10px 22px; border-radius: 8px; font-size: 14px; font-weight: 600;
+    cursor: pointer; text-decoration: none; border: none;
+    transition: var(--transition); font-family: var(--font-body);
+    white-space: nowrap;
+  }
+
+  .btn-ghost {
+    background: transparent; color: var(--text-muted);
+    border: 1px solid var(--border-dim);
+  }
+  .btn-ghost:hover { color: var(--white); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); }
+
+  .btn-gold {
+    background: var(--gold); color: #000;
+    box-shadow: 0 0 20px rgba(201,168,76,0.3);
+  }
+  .btn-gold:hover { background: var(--gold-light); box-shadow: 0 0 30px rgba(201,168,76,0.5); transform: translateY(-1px); }
+
+  .btn-outline-gold {
+    background: transparent; color: var(--gold);
+    border: 1px solid var(--gold);
+  }
+  .btn-outline-gold:hover { background: var(--gold-dim); }
+
+  .btn-sm { padding: 7px 16px; font-size: 13px; }
+  .btn-lg { padding: 14px 32px; font-size: 16px; }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 120px 40px 80px;
+    position: relative; overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(96,165,250,0.05) 0%, transparent 50%),
+      radial-gradient(ellipse 40% 40% at 80% 60%, rgba(45,212,191,0.04) 0%, transparent 50%);
+  }
+
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 100%);
+  }
+
+  .hero-content { position: relative; max-width: 800px; animation: fadeUp 0.8s ease both; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 16px; border-radius: 50px; margin-bottom: 28px;
+    background: var(--gold-dim); border: 1px solid var(--border);
+    font-size: 13px; color: var(--gold); font-weight: 500;
+  }
+
+  .hero-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: pulse 2s infinite; }
+
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(42px, 6vw, 72px);
+    line-height: 1.1; font-weight: 900;
+    color: var(--white); margin-bottom: 22px;
+  }
+
+  .hero h1 em { color: var(--gold); font-style: normal; }
+
+  .hero p {
+    font-size: 18px; color: var(--text-muted); line-height: 1.7;
+    max-width: 580px; margin: 0 auto 36px;
+  }
+
+  .hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 52px; }
+
+  .hero-trust {
+    display: flex; gap: 32px; justify-content: center; flex-wrap: wrap;
+    padding-top: 32px; border-top: 1px solid var(--border-dim);
+  }
+
+  .trust-item {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--text-muted);
+  }
+  .trust-item span { color: var(--gold); font-size: 16px; }
+
+  /* ===== SECTION STYLES ===== */
+  .section { padding: 90px 40px; }
+  .section-sm { padding: 60px 40px; }
+
+  .container { max-width: 1160px; margin: 0 auto; }
+
+  .section-label {
+    font-size: 12px; font-weight: 600; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 14px; display: block;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700; color: var(--white);
+    line-height: 1.2; margin-bottom: 16px;
+  }
+
+  .section-sub {
+    font-size: 16px; color: var(--text-muted);
+    max-width: 560px; line-height: 1.7;
+  }
+
+  .section-header { margin-bottom: 56px; }
+  .section-header.center { text-align: center; }
+  .section-header.center .section-sub { margin: 0 auto; }
+
+  /* ===== PILLARS ===== */
+  .pillars-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  }
+
+  .pillar-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-dim);
+    border-radius: var(--radius);
+    padding: 36px 32px;
+    transition: var(--transition);
+    position: relative; overflow: hidden;
+  }
+
+  .pillar-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0; transition: var(--transition);
+  }
+
+  .pillar-card:hover { background: var(--bg-card-hover); border-color: var(--border); transform: translateY(-4px); }
+  .pillar-card:hover::before { opacity: 1; }
+
+  .pillar-icon {
+    width: 52px; height: 52px; border-radius: 12px;
+    background: var(--gold-dim); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; margin-bottom: 22px;
+  }
+
+  .pillar-card h3 { font-size: 19px; font-weight: 600; margin-bottom: 12px; color: var(--white); }
+  .pillar-card p { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+
+  /* ===== HOW IT WORKS ===== */
+  .how-bg { background: var(--bg-secondary); }
+
+  .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; position: relative; }
+
+  .steps-grid::before {
+    content: ''; position: absolute; top: 32px; left: 16.66%;
+    width: 66.66%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0.3;
+  }
+
+  .step { text-align: center; }
+
+  .step-num {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: var(--gold-dim); border: 2px solid var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 22px; font-weight: 700;
+    color: var(--gold); margin: 0 auto 22px;
+  }
+
+  .step h3 { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
+  .step p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+  /* ===== PRICING ===== */
+  .pricing-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; max-width: 800px; margin: 0 auto; }
+
+  .pricing-card {
+    background: var(--bg-card); border: 1px solid var(--border-dim);
+    border-radius: 16px; padding: 40px 36px;
+    transition: var(--transition); position: relative;
+  }
+
+  .pricing-card.featured {
+    border-color: var(--gold);
+    background: linear-gradient(135deg, #131C30 0%, #1A2540 100%);
+    box-shadow: 0 0 60px rgba(201,168,76,0.15);
+  }
+
+  .popular-badge {
+    position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+    background: var(--gold); color: #000;
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; padding: 4px 16px; border-radius: 50px;
+  }
+
+  .pricing-plan { font-size: 13px; color: var(--text-muted); font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+
+  .pricing-price {
+    font-family: var(--font-display);
+    font-size: 52px; font-weight: 900; color: var(--white);
+    line-height: 1;
+  }
+
+  .pricing-price sup { font-size: 24px; vertical-align: super; font-family: var(--font-body); font-weight: 400; }
+  .pricing-price sub { font-size: 16px; color: var(--text-muted); font-family: var(--font-body); font-weight: 400; }
+
+  .pricing-desc { font-size: 14px; color: var(--text-muted); margin: 14px 0 28px; }
+
+  .pricing-features { list-style: none; margin-bottom: 32px; }
+
+  .pricing-features li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 14px; color: var(--white);
+    padding: 8px 0; border-bottom: 1px solid var(--border-dim);
+  }
+  .pricing-features li:last-child { border: none; }
+  .pricing-features li::before { content: '✓'; color: var(--gold); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+  /* ===== TESTIMONIALS ===== */
+  .testimonials-bg { background: var(--bg-secondary); }
+  .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+  .testimonial-card {
+    background: var(--bg-card); border: 1px solid var(--border-dim);
+    border-radius: var(--radius); padding: 28px;
+    transition: var(--transition);
+  }
+  .testimonial-card:hover { border-color: var(--border); transform: translateY(-3px); }
+
+  .testimonial-stars { color: var(--gold); font-size: 14px; margin-bottom: 16px; }
+
+  .testimonial-quote { font-size: 15px; color: var(--text-muted); line-height: 1.7; margin-bottom: 22px; font-style: italic; }
+
+  .testimonial-author { display: flex; align-items: center; gap: 12px; }
+
+  .author-avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: var(--gold-dim); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 15px; color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .author-name { font-weight: 600; font-size: 14px; }
+  .author-loc { font-size: 12px; color: var(--text-muted); }
+
+  /* ===== FAQ ===== */
+  .faq-list { max-width: 720px; margin: 0 auto; }
+
+  .faq-item {
+    border-bottom: 1px solid var(--border-dim);
+    overflow: hidden;
+  }
+
+  .faq-q {
+    width: 100%; background: none; border: none;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 22px 0; cursor: pointer; text-align: left;
+    color: var(--white); font-size: 16px; font-weight: 500;
+    font-family: var(--font-body); transition: var(--transition);
+  }
+  .faq-q:hover { color: var(--gold); }
+
+  .faq-icon {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+    color: var(--gold); font-size: 18px; flex-shrink: 0;
+    transition: var(--transition);
+  }
+
+  .faq-item.open .faq-icon { transform: rotate(45deg); background: var(--gold-dim); }
+
+  .faq-a {
+    max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.35s ease;
+  }
+  .faq-item.open .faq-a { max-height: 200px; padding-bottom: 18px; }
+  .faq-a p { font-size: 15px; color: var(--text-muted); line-height: 1.7; }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-dim);
+    padding: 60px 40px 30px;
+  }
+
+  .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+
+  .footer-brand p { font-size: 14px; color: var(--text-muted); line-height: 1.7; margin: 16px 0 24px; max-width: 280px; }
+
+  .footer-social { display: flex; gap: 12px; }
+  .footer-social a {
+    width: 36px; height: 36px; border-radius: 8px;
+    border: 1px solid var(--border-dim); display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted); font-size: 14px; text-decoration: none;
+    transition: var(--transition);
+  }
+  .footer-social a:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+
+  .footer-col h4 { font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--white); margin-bottom: 18px; }
+
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 10px; }
+  .footer-col ul li a { font-size: 14px; color: var(--text-muted); text-decoration: none; cursor: pointer; transition: var(--transition); }
+  .footer-col ul li a:hover { color: var(--gold); }
+
+  .footer-bottom {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 28px; border-top: 1px solid var(--border-dim);
+    font-size: 13px; color: var(--text-dim);
+  }
+
+  /* ===== PAGE HEADER (inner pages) ===== */
+  .page-header {
+    padding: 120px 40px 60px;
+    background: linear-gradient(180deg, rgba(201,168,76,0.05) 0%, transparent 100%);
+    border-bottom: 1px solid var(--border-dim);
+    text-align: center;
+  }
+
+  .page-header h1 { font-family: var(--font-display); font-size: clamp(32px,5vw,52px); font-weight: 700; margin-bottom: 16px; }
+  .page-header p { font-size: 17px; color: var(--text-muted); max-width: 560px; margin: 0 auto; line-height: 1.7; }
+
+  /* ===== FILTER BAR ===== */
+  .filter-bar {
+    background: var(--bg-card); border: 1px solid var(--border-dim);
+    border-radius: var(--radius); padding: 20px 24px;
+    display: flex; gap: 16px; flex-wrap: wrap; align-items: center;
+    margin-bottom: 32px;
+  }
+
+  .filter-bar input, .filter-bar select {
+    background: var(--bg-secondary); border: 1px solid var(--border-dim);
+    border-radius: 8px; padding: 10px 14px;
+    color: var(--white); font-size: 14px; font-family: var(--font-body);
+    outline: none; transition: var(--transition);
+    cursor: pointer;
+  }
+
+  .filter-bar input { flex: 1; min-width: 200px; }
+  .filter-bar input::placeholder { color: var(--text-dim); }
+  .filter-bar input:focus, .filter-bar select:focus { border-color: var(--gold); }
+  .filter-bar select option { background: var(--bg-secondary); }
+
+  /* ===== JOB CARDS ===== */
+  .jobs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+  .job-card {
+    background: var(--bg-card); border: 1px solid var(--border-dim);
+    border-radius: var(--radius); padding: 24px;
+    transition: var(--transition); position: relative;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .job-card:hover { border-color: var(--border); background: var(--bg-card-hover); transform: translateY(-2px); box-shadow: var(--shadow); }
+
+  .job-card.locked { overflow: hidden; }
+
+  .lock-overlay {
+    position: absolute; inset: 0; border-radius: var(--radius);
+    backdrop-filter: blur(6px);
+    background: rgba(8,13,26,0.7);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 10px; z-index: 10;
+  }
+
+  .lock-overlay .lock-icon { font-size: 28px; }
+  .lock-overlay p { font-size: 14px; color: var(--text-muted); }
+  .lock-overlay .btn { z-index: 11; }
+
+  .job-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .job-company { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
+  .job-title { font-size: 17px; font-weight: 600; color: var(--white); }
+  .job-location { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+  .job-salary { font-size: 14px; font-weight: 600; color: var(--gold); }
+
+  .job-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .tag {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+    padding: 4px 10px; border-radius: 50px;
+  }
+
+  .tag-visa { background: rgba(96,165,250,0.15); color: var(--blue); border: 1px solid rgba(96,165,250,0.3); }
+  .tag-reloc { background: rgba(45,212,191,0.15); color: var(--green); border: 1px solid rgba(45,212,191,0.3); }
+  .tag-both { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--border); }
+  .tag-industry { background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid var(--border-dim); }
+  .tag-arabic { background: rgba(248,113,113,0.15); color: var(--red); border: 1px solid rgba(248,113,113,0.3); }
+  .tag-english { background: rgba(45,212,191,0.12); color: var(--green); border: 1px solid rgba(45,212,191,0.25); }
+  .tag-bilingual { background: rgba(201,168,76,0.1); color: var(--gold); border: 1px solid rgba(201,168,76,0.2); }
+
+  /* ===== GCC CARDS ===== */
+  .gcc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+  .gcc-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-dim);
+    border-radius: var(--radius); padding: 26px;
+    transition: var(--transition); position: relative;
+  }
+  .gcc-card:hover { border-color: var(--border); background: var(--bg-card-hover); }
+
+  .gcc-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+  .gcc-company { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
+  .gcc-title { font-size: 17px; font-weight: 600; }
+
+  .gcc-package {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    background: var(--bg-secondary); border-radius: 8px; padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+  .pkg-item { font-size: 12px; }
+  .pkg-label { color: var(--text-dim); display: block; margin-bottom: 4px; }
+  .pkg-val { color: var(--gold); font-weight: 600; font-size: 13px; }
+
+  .gcc-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+  /* ===== COUNTRY CARDS ===== */
+  .countries-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+
+  .country-card {
+    background: var(--bg-card); border: 1px solid var(--border-dim);
+    border-radius: var(--radius); padding: 24px;
+    transition: var(--transition); cursor: pointer;
+  }
+  .country-card:hover { border-color: var(--border); background: var(--bg-card-hover); transform: translateY(-3px); box-shadow: var(--shadow); }
+
+  .country-flag { font-size: 36px; margin-bottom: 10px; }
+  .country-name { font-size: 17px; font-weight: 600; margin-bottom: 18px; }
+
+  .metric { margin-bottom: 10px; }
+  .metric-label { font-size: 11px; color: var(--text-dim); display: flex; justify-content: space-between; margin-bottom: 5px; }
+  .metric-val { font-size: 11px; font-weight: 600; color: var(--white); }
+
+  .metric-bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.06); overflow: hidden; }
+  .metric-fill { height: 100%; border-radius: 2px; }
+  .fill-green { background: var(--green); }
+  .fill-gold { background: var(--gold); }
+  .fill-red { background: var(--red); }
+
+  .metric-chip {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 3px 8px; border-radius: 4px;
+  }
+  .chip-low { background: rgba(45,212,191,0.15); color: var(--green); }
+  .chip-medium { background: rgba(201,168,76,0.15); color: var(--gold); }
+  .chip-high { background: rgba(248,113,113,0.15); color: var(--red); }
+
+  .country-cta { margin-top: 18px; }
+
+  /* ===== DASHBOARD ===== */
+  .dashboard-layout {
+    display: flex; min-height: 100vh; padding-top: 68px;
+  }
+
+  .sidebar {
+    width: 240px; flex-shrink: 0;
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border-dim);
+    padding: 24px 0;
+    position: sticky; top: 68px; height: calc(100vh - 68px);
+    overflow-y: auto;
+  }
+
+  .sidebar-section { padding: 0 12px; margin-bottom: 6px; }
+  .sidebar-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); padding: 8px 12px; }
+
+  .sidebar-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: 8px;
+    font-size: 14px; font-weight: 500; color: var(--text-muted);
+    cursor: pointer; transition: var(--transition);
+    position: relative; text-decoration: none;
+  }
+  .sidebar-link:hover { background: rgba(255,255,255,0.04); color: var(--white); }
+  .sidebar-link.active { background: var(--gold-dim); color: var(--gold); }
+
+  .sidebar-icon { font-size: 16px; width: 20px; text-align: center; }
+
+  .notif-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--red); margin-left: auto;
+  }
+
+  .dash-main { flex: 1; padding: 32px 40px; overflow-y: auto; }
+
+  .dash-welcome {
+    background: linear-gradient(135deg, var(--bg-card) 0%, #1A2540 100%);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 28px;
+  }
+
+  .dash-welcome h2 { font-family: var(--font-display); font-size: 26px; margin-bottom: 6px; }
+  .dash-welcome p { font-size: 14px; color: var(--text-muted); }
+
+  .member-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--gold); color: #000;
+    font-size: 12px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; padding: 5px 14px; border-radius: 50px;
+  }
+
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+
+  .stat-card {
+    background: var(--bg-card); border: 1px solid var(--border-dim);
+    border-radius: var(--radius); padding: 20px 22px;
+  }
+
+  .stat-label { font-size: 12px; color: var(--text-dim); margin-bottom: 8px; }
+  .stat-value { font-family: var(--font-display); font-size: 32px; font-weight: 700; color: var(--white); }
+  .stat-card.highlight { border-color: var(--gold); background: var(--gold-dim); }
+  .stat-card.highlight .stat-value { color: var(--gold); font-size: 20px; }
+
+  .dash-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; margin-bottom: 24px; }
+
+  .dash-card {
+    background: var(--bg-card); border: 1px solid var(--border-dim);
+    border-radius: var(--radius); padding: 24px;
+  }
+  .dash-card-title { font-size: 15px; font-weight: 600; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+  .dash-card-title .new-badge { font-size: 10px; background: var(--red); color: white; padding: 2px 8px; border-radius: 50px; font-weight: 700; }
+
+  .drop-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 0; border-bottom: 1px solid var(--border-dim);
+    font-size: 14px; color: var(--text-muted); line-height: 1.5;
+  }
+  .drop-item:last-of-type { border: none; }
+  .drop-bullet { color: var(--gold); font-size: 6px; margin-top: 6px; flex-shrink: 0; }
+
+  .activity-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 0; border-bottom: 1px solid var(--border-dim);
+  }
+  .activity-item:last-child { border: none; }
+  .activity-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); margin-top: 5px; flex-shrink: 0; }
+  .activity-text { font-size: 13px; color: var(--text-muted); flex: 1; line-height: 1.5; }
+  .activity-time { font-size: 11px; color: var(--text-dim); flex-shrink: 0; }
+
+  /* Referral section */
+  .referral-box {
+    background: var(--bg-secondary); border: 1px solid var(--border-dim);
+    border-radius: 8px; padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px; margin: 16px 0;
+  }
+  .referral-link { font-size: 13px; color: var(--gold); flex: 1; font-family: monospace; }
+
+  .ref-stats { display: flex; gap: 20px; margin-bottom: 16px; }
+  .ref-stat { text-align: center; }
+  .ref-stat-val { font-size: 22px; font-weight: 700; color: var(--gold); }
+  .ref-stat-label { font-size: 11px; color: var(--text-dim); }
+
+  .progress-bar { background: rgba(255,255,255,0.06); border-radius: 50px; height: 8px; overflow: hidden; margin-bottom: 8px; }
+  .progress-fill { background: linear-gradient(90deg, var(--gold), var(--gold-light)); height: 100%; border-radius: 50px; }
+  .progress-text { font-size: 11px; color: var(--text-dim); }
+
+  /* ===== ABOUT ===== */
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  .about-visual {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 48px;
+    text-align: center;
+  }
+  .about-visual .big-icon { font-size: 80px; margin-bottom: 20px; }
+  .about-stat { margin-bottom: 24px; }
+  .about-stat-num { font-family: var(--font-display); font-size: 42px; font-weight: 900; color: var(--gold); }
+  .about-stat-label { font-size: 14px; color: var(--text-muted); }
+
+  .team-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 60px; }
+  .team-card { background: var(--bg-card); border: 1px solid var(--border-dim); border-radius: var(--radius); padding: 28px; text-align: center; }
+  .team-avatar { width: 72px; height: 72px; border-radius: 50%; background: var(--gold-dim); border: 2px solid var(--gold); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; color: var(--gold); margin: 0 auto 14px; }
+  .team-name { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .team-role { font-size: 13px; color: var(--gold); margin-bottom: 12px; }
+  .team-bio { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+  /* ===== AUTH PAGES ===== */
+  .auth-page {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 100px 20px 40px;
+    background: radial-gradient(ellipse 70% 60% at 50% 0%, rgba(201,168,76,0.06) 0%, transparent 60%);
+  }
+
+  .auth-card {
+    background: var(--bg-card); border: 1px solid var(--border-dim);
+    border-radius: 20px; padding: 48px; width: 100%; max-width: 440px;
+    box-shadow: var(--shadow);
+  }
+
+  .auth-logo { text-align: center; margin-bottom: 32px; }
+  .auth-logo h2 { font-family: var(--font-display); font-size: 28px; margin-bottom: 8px; }
+  .auth-logo p { font-size: 14px; color: var(--text-muted); }
+
+  .form-group { margin-bottom: 18px; }
+  .form-label { display: block; font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 8px; }
+  .form-input, .form-select {
+    width: 100%; background: var(--bg-secondary);
+    border: 1px solid var(--border-dim); border-radius: 8px;
+    padding: 12px 14px; color: var(--white); font-size: 15px;
+    font-family: var(--font-body); outline: none; transition: var(--transition);
+  }
+  .form-input:focus, .form-select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-dim); }
+  .form-input::placeholder { color: var(--text-dim); }
+  .form-select option { background: var(--bg-secondary); }
+
+  .auth-footer { text-align: center; margin-top: 22px; font-size: 14px; color: var(--text-muted); }
+  .auth-footer a { color: var(--gold); text-decoration: none; cursor: pointer; }
+  .auth-footer a:hover { text-decoration: underline; }
+
+  .form-forgot { text-align: right; margin-top: 6px; }
+  .form-forgot a { font-size: 12px; color: var(--text-dim); text-decoration: none; cursor: pointer; }
+  .form-forgot a:hover { color: var(--gold); }
+
+  /* ===== GCC PREMIUM BANNER ===== */
+  .gcc-banner {
+    background: linear-gradient(135deg, rgba(201,168,76,0.08) 0%, rgba(201,168,76,0.03) 100%);
+    border: 1px solid var(--border); border-radius: 16px;
+    padding: 32px 36px; margin-bottom: 36px;
+    display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  }
+  .gcc-banner h3 { font-family: var(--font-display); font-size: 24px; margin-bottom: 8px; }
+  .gcc-banner p { font-size: 14px; color: var(--text-muted); max-width: 480px; line-height: 1.6; }
+
+  /* ===== GOLD DIVIDER ===== */
+  .gold-divider {
+    width: 60px; height: 2px; background: linear-gradient(90deg, var(--gold), transparent);
+    margin: 16px 0;
+  }
+  .gold-divider.center { margin: 16px auto; background: linear-gradient(90deg, transparent, var(--gold), transparent); width: 120px; }
+
+  /* ===== TOAST ===== */
+  .toast {
+    position: fixed; bottom: 28px; right: 28px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 20px;
+    box-shadow: var(--shadow); z-index: 9999;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 14px; transform: translateY(80px); opacity: 0;
+    transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    max-width: 320px;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast-icon { font-size: 18px; flex-shrink: 0; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 1024px) {
+    .pillars-grid, .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+    .countries-grid { grid-template-columns: repeat(3, 1fr); }
+    .footer-top { grid-template-columns: 1fr 1fr; }
+    .dash-grid { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 768px) {
+    .navbar { padding: 0 20px; }
+    .nav-links { display: none; }
+    .section, .section-sm { padding: 60px 20px; }
+    .hero { padding: 100px 20px 60px; }
+    .jobs-grid, .gcc-grid { grid-template-columns: 1fr; }
+    .pillars-grid, .testimonials-grid, .steps-grid { grid-template-columns: 1fr; }
+    .steps-grid::before { display: none; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .countries-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-top { grid-template-columns: 1fr; }
+    .about-grid { grid-template-columns: 1fr; }
+    .team-grid { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .dash-main { padding: 20px; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .page-header { padding: 100px 20px 40px; }
+  }
+
+  /* ===== UTILS ===== */
+  .gold { color: var(--gold); }
+  .muted { color: var(--text-muted); }
+  .mt-4 { margin-top: 16px; }
+  .mt-6 { margin-top: 24px; }
+  .mt-8 { margin-top: 32px; }
+  .mb-0 { margin-bottom: 0 !important; }
+  .text-center { text-align: center; }
+  .w-full { width: 100%; }
+  .flex { display: flex; }
+  .gap-2 { gap: 8px; }
+  .gap-3 { gap: 12px; }
+  .items-center { align-items: center; }
+  .justify-between { justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+  <a class="nav-logo" onclick="navigate('home')">
+    <svg viewBox="0 0 32 32" fill="none">
+      <circle cx="16" cy="16" r="14" stroke="#C9A84C" stroke-width="1.5"/>
+      <path d="M16 4 L16 28 M4 16 L28 16" stroke="#C9A84C" stroke-width="1.2" opacity="0.5"/>
+      <path d="M16 8 L19 13 L16 12 L13 13 Z" fill="#C9A84C"/>
+      <circle cx="16" cy="16" r="3" fill="#C9A84C" opacity="0.4"/>
+      <circle cx="16" cy="16" r="1.5" fill="#C9A84C"/>
+    </svg>
+    <span class="nav-logo-text">Global<span>Hound</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a onclick="navigate('home')" data-page="home">Home</a></li>
+    <li><a onclick="navigate('jobs')" data-page="jobs">Jobs</a></li>
+    <li><a onclick="navigate('gcc')" data-page="gcc">GCC Market</a></li>
+    <li><a onclick="navigate('countries')" data-page="countries">Countries</a></li>
+    <li><a onclick="navigate('about')" data-page="about">About</a></li>
+  </ul>
+  <div class="nav-actions" id="navActions">
+    <button class="btn btn-ghost btn-sm" onclick="navigate('login')">Login</button>
+    <button class="btn btn-gold btn-sm" onclick="navigate('register')">Start Free Trial</button>
+  </div>
+</nav>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toastIcon">✓</span>
+  <span id="toastMsg"></span>
+</div>
+
+<!-- ===================== PAGE: HOME ===================== -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="hero-badge">🌍 The Global Career Intelligence Platform</div>
+      <h1>Your Passport to<br><em>Global Opportunity</em></h1>
+      <p>Insider intelligence on visa-friendly jobs, country data, and the hidden GCC job market — all in one subscription.</p>
+      <div class="hero-actions">
+        <button class="btn btn-gold btn-lg" onclick="navigate('register')">Start Your Free Trial</button>
+        <button class="btn btn-ghost btn-lg" onclick="navigate('jobs')">See What's Inside</button>
+      </div>
+      <div class="hero-trust">
+        <div class="trust-item"><span>🌍</span> 30+ Countries Tracked</div>
+        <div class="trust-item"><span>💼</span> 500+ Verified Employers</div>
+        <div class="trust-item"><span>🔒</span> Members-Only GCC Listings</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PILLARS -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header center">
+        <span class="section-label">What We Offer</span>
+        <h2 class="section-title">Everything You Need to Move Smarter</h2>
+        <div class="gold-divider center"></div>
+      </div>
+      <div class="pillars-grid">
+        <div class="pillar-card">
+          <div class="pillar-icon">🌐</div>
+          <h3>Country Intelligence Hub</h3>
+          <p>Verified data on visa ease, tax levels, safety scores, and business climate across 30+ countries. Updated monthly with the latest immigration policy changes.</p>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-icon">💼</div>
+          <h3>Visa-Friendly Jobs Portal</h3>
+          <p>Employers and roles proven to sponsor international talent and support relocation costs. Filter by country, industry, and sponsorship type to find your match.</p>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-icon">🔒</div>
+          <h3>Private GCC & Middle East Market</h3>
+          <p>Exclusive listings from Saudi Arabia, UAE, Qatar, Kuwait & Oman that never appear on mainstream job boards. Full salary and package breakdown included.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section how-bg">
+    <div class="container">
+      <div class="section-header center">
+        <span class="section-label">Getting Started</span>
+        <h2 class="section-title">Three Steps to Your Global Career</h2>
+        <div class="gold-divider center"></div>
+      </div>
+      <div class="steps-grid">
+        <div class="step">
+          <div class="step-num">01</div>
+          <h3>Create Your Free Account</h3>
+          <p>Sign up in under two minutes. No credit card required to explore the platform and browse sample intelligence.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <h3>Choose Your Membership Plan</h3>
+          <p>Starter at $29/mo or Pro at $79/mo. Unlock full listings, country reports, GCC private market, and weekly intelligence drops.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <h3>Access Intelligence & Apply</h3>
+          <p>Use our curated data to target your search, avoid dead ends, and approach employers that actually support international talent.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="section" id="pricing">
+    <div class="container">
+      <div class="section-header center">
+        <span class="section-label">Membership Plans</span>
+        <h2 class="section-title">Choose Your Plan</h2>
+        <p class="section-sub">Cancel anytime. No hidden fees.</p>
+        <div class="gold-divider center"></div>
+      </div>
+      <div class="pricing-grid">
+        <!-- Starter -->
+        <div class="pricing-card">
+          <p class="pricing-plan">Starter</p>
+          <div class="pricing-price"><sup>$</sup>29<sub>/mo</sub></div>
+          <p class="pricing-desc">Perfect for professionals exploring international opportunities.</p>
+          <ul class="pricing-features">
+            <li>Access to 30+ country profiles</li>
+            <li>200+ visa-friendly job listings</li>
+            <li>Weekly Intelligence Drop (summary)</li>
+            <li>Filter by country, industry & sponsorship</li>
+            <li>Bookmark up to 20 jobs & countries</li>
+            <li>Email support</li>
+          </ul>
+          <button class="btn btn-outline-gold w-full" onclick="navigate('register')">Get Started</button>
+        </div>
+        <!-- Pro -->
+        <div class="pricing-card featured">
+          <div class="popular-badge">Most Popular</div>
+          <p class="pricing-plan">Pro</p>
+          <div class="pricing-price"><sup>$</sup>79<sub>/mo</sub></div>
+          <p class="pricing-desc">For serious movers who want every edge in the global job market.</p>
+          <ul class="pricing-features">
+            <li>Everything in Starter, plus:</li>
+            <li>Full GCC private listings with packages</li>
+            <li>Complete weekly intelligence drops</li>
+            <li>Salary negotiation guides by country</li>
+            <li>Relocation cost calculators</li>
+            <li>Move Smarter Rewards referral program</li>
+            <li>Priority support & onboarding call</li>
+          </ul>
+          <button class="btn btn-gold w-full" onclick="navigate('register')">Go Pro</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section testimonials-bg">
+    <div class="container">
+      <div class="section-header center">
+        <span class="section-label">Member Stories</span>
+        <h2 class="section-title">What Our Members Are Saying</h2>
+        <div class="gold-divider center"></div>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"I found my UAE finance role through GlobalHound's GCC listings. The full package details — salary, housing, flights — saved me hours of guesswork and negotiation."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">SM</div>
+            <div>
+              <div class="author-name">Sarah M.</div>
+              <div class="author-loc">📍 Toronto → Dubai, UAE</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"The country intelligence reports are unlike anything I've seen online. I knew exactly what tax situation, visa timeline, and cost of living to expect before applying to German companies."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">KA</div>
+            <div>
+              <div class="author-name">Kwame A.</div>
+              <div class="author-loc">📍 Accra → Berlin, Germany</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"The visa-friendly job filters are a genuine game changer. I stopped wasting applications on companies that don't sponsor and landed a Netherlands role within 6 weeks."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">PS</div>
+            <div>
+              <div class="author-name">Priya S.</div>
+              <div class="author-loc">📍 Bangalore → Amsterdam, NL</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header center">
+        <span class="section-label">Questions</span>
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <div class="gold-divider center"></div>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            What is GlobalHound?
+            <div class="faq-icon">+</div>
+          </button>
+          <div class="faq-a"><p>GlobalHound is a subscription-based intelligence platform that helps internationally-minded professionals relocate and find visa-friendly employment abroad. We curate country data, verified employer listings, and exclusive GCC job market intelligence you can't find anywhere else.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            What makes the GCC listings exclusive?
+            <div class="faq-icon">+</div>
+          </button>
+          <div class="faq-a"><p>Our GCC listings come from direct employer relationships and regional recruiting networks across Saudi Arabia, UAE, Qatar, Kuwait, and Oman. These roles are never posted on mainstream boards like LinkedIn or Indeed — they're shared exclusively with our Pro members, including full salary, housing allowance, flight, and package details.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Can I cancel my subscription anytime?
+            <div class="faq-icon">+</div>
+          </button>
+          <div class="faq-a"><p>Yes. There are no contracts or cancellation fees. You can cancel your subscription at any time from your billing settings and you'll retain access until the end of your current billing period.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            How often is the intelligence data updated?
+            <div class="faq-icon">+</div>
+          </button>
+          <div class="faq-a"><p>Country profiles are reviewed and updated monthly. Job listings are refreshed weekly. The Weekly Intelligence Drop is published every Monday and covers the most important immigration policy changes, GCC hiring trends, and employer news that affects internationally mobile professionals.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Is GlobalHound suitable for all professions?
+            <div class="faq-icon">+</div>
+          </button>
+          <div class="faq-a"><p>Our platform covers a wide range of industries including technology, engineering, finance, healthcare, education, hospitality, and more. Our country intelligence is relevant regardless of profession, and our job listings span a diverse mix of sectors. We're particularly valuable for skilled professionals with internationally transferable qualifications.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            What countries are currently covered?
+            <div class="faq-icon">+</div>
+          </button>
+          <div class="faq-a"><p>We currently track 30+ countries with full intelligence profiles including UAE, Germany, Canada, Singapore, Portugal, Netherlands, Australia, UK, New Zealand, Japan, Saudi Arabia, Qatar, Kuwait, and more. We add new country profiles quarterly based on member demand.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <section class="section-sm" style="background: var(--bg-secondary); border-top: 1px solid var(--border-dim);">
+    <div class="container" style="text-align:center;">
+      <h2 class="section-title mb-0" style="margin-bottom: 14px;">Ready to Move Smarter?</h2>
+      <p style="color: var(--text-muted); margin-bottom: 28px; font-size: 16px;">Join thousands of globally mobile professionals using GlobalHound intelligence.</p>
+      <button class="btn btn-gold btn-lg" onclick="navigate('register')">Start Your Free Trial →</button>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a class="nav-logo" onclick="navigate('home')">
+            <svg viewBox="0 0 32 32" fill="none" style="width:28px;height:28px;">
+              <circle cx="16" cy="16" r="14" stroke="#C9A84C" stroke-width="1.5"/>
+              <path d="M16 8 L19 13 L16 12 L13 13 Z" fill="#C9A84C"/>
+              <circle cx="16" cy="16" r="1.5" fill="#C9A84C"/>
+            </svg>
+            <span class="nav-logo-text" style="font-size:18px;">Global<span>Hound</span></span>
+          </a>
+          <p>The intelligence layer behind your next global move. Visa-friendly jobs, country data, and exclusive GCC listings.</p>
+          <div class="footer-social">
+            <a href="#" title="LinkedIn">in</a>
+            <a href="#" title="X">𝕏</a>
+            <a href="#" title="Instagram">◎</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <ul>
+            <li><a onclick="navigate('jobs')">Jobs Portal</a></li>
+            <li><a onclick="navigate('gcc')">GCC Market</a></li>
+            <li><a onclick="navigate('countries')">Countries Hub</a></li>
+            <li><a onclick="navigate('home'); setTimeout(()=>document.getElementById('pricing').scrollIntoView({behavior:'smooth'}),300)">Pricing</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a onclick="navigate('about')">About Us</a></li>
+            <li><a href="#">Weekly Drop</a></li>
+            <li><a href="#">Referral Program</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Refund Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2025 GlobalHound. All rights reserved.</span>
+        <span style="color: var(--gold); font-size:12px;">🐾 Move Smarter.</span>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ===================== PAGE: JOBS ===================== -->
+<div class="page" id="page-jobs">
+  <div class="page-header">
+    <span class="section-label">Job Board</span>
+    <h1>Visa-Friendly Employers & Jobs</h1>
+    <p>Roles from employers proven to sponsor international talent and support relocation. Every listing is verified.</p>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="filter-bar">
+        <input type="text" id="jobSearch" placeholder="🔍 Search job titles or companies..." oninput="filterJobs()">
+        <select onchange="filterJobs()" id="filterCountry">
+          <option value="">🌍 All Countries</option>
+          <option>Germany</option><option>Singapore</option><option>Canada</option>
+          <option>Netherlands</option><option>United Kingdom</option><option>Australia</option>
+          <option>UAE</option><option>Portugal</option>
+        </select>
+        <select onchange="filterJobs()" id="filterIndustry">
+          <option value="">📁 All Industries</option>
+          <option>Tech</option><option>Finance</option><option>Engineering</option>
+          <option>Healthcare</option><option>Hospitality</option><option>Operations</option>
+        </select>
+        <select onchange="filterJobs()" id="filterSponsorship">
+          <option value="">🎫 All Sponsorship Types</option>
+          <option>Visa Sponsor</option><option>Relocation Support</option><option>Both</option>
+        </select>
+      </div>
+
+      <div class="jobs-grid" id="jobsGrid">
+        <!-- Jobs rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <span>© 2025 GlobalHound. All rights reserved.</span>
+        <button class="btn btn-ghost btn-sm" onclick="navigate('home')">← Back to Home</button>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ===================== PAGE: GCC ===================== -->
+<div class="page" id="page-gcc">
+  <div class="page-header" style="background: linear-gradient(180deg, rgba(201,168,76,0.08) 0%, transparent 100%);">
+    <span class="section-label">Exclusive Access</span>
+    <h1>Private GCC & Middle East Job Market</h1>
+    <p>Exclusive listings not found on mainstream job boards. Full salary, housing, and package details included for Pro members.</p>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="gcc-banner">
+        <div>
+          <h3>🔒 Members-Only Intelligence</h3>
+          <p>These listings come directly from our GCC employer network across Saudi Arabia, UAE, Qatar, Kuwait & Oman. Pro membership unlocks full package details, contact information, and application guidance.</p>
+        </div>
+        <button class="btn btn-gold" onclick="navigate('register')">Unlock Full Access</button>
+      </div>
+      <div class="gcc-grid" id="gccGrid">
+        <!-- GCC jobs rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <span>© 2025 GlobalHound. All rights reserved.</span>
+        <button class="btn btn-ghost btn-sm" onclick="navigate('home')">← Back to Home</button>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ===================== PAGE: COUNTRIES ===================== -->
+<div class="page" id="page-countries">
+  <div class="page-header">
+    <span class="section-label">Intelligence Hub</span>
+    <h1>Country Intelligence Hub</h1>
+    <p>Data-backed profiles on the best countries for relocation, visas, and career growth. Updated monthly.</p>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="countries-grid" id="countriesGrid">
+        <!-- Country cards rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <span>© 2025 GlobalHound. All rights reserved.</span>
+        <button class="btn btn-ghost btn-sm" onclick="navigate('home')">← Back to Home</button>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ===================== PAGE: DASHBOARD ===================== -->
+<div class="page" id="page-dashboard">
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div style="padding: 0 12px 16px; border-bottom: 1px solid var(--border-dim); margin-bottom: 12px;">
+        <a class="nav-logo" onclick="navigate('home')" style="padding: 8px 0; display:flex; gap:8px; align-items:center; text-decoration:none;">
+          <svg viewBox="0 0 32 32" fill="none" style="width:24px;height:24px;"><circle cx="16" cy="16" r="14" stroke="#C9A84C" stroke-width="1.5"/><circle cx="16" cy="16" r="1.5" fill="#C9A84C"/></svg>
+          <span style="font-family: var(--font-display); font-size:16px; color:var(--white); font-weight:700;">Global<span style="color:var(--gold);">Hound</span></span>
+        </a>
+      </div>
+      <div class="sidebar-label">Main</div>
+      <div class="sidebar-section">
+        <a class="sidebar-link active" onclick="showDashTab('overview', this)"><span class="sidebar-icon">⊞</span> Dashboard</a>
+        <a class="sidebar-link" onclick="navigate('countries')"><span class="sidebar-icon">🌍</span> Country Hub</a>
+        <a class="sidebar-link" onclick="navigate('jobs')"><span class="sidebar-icon">💼</span> Jobs Portal</a>
+        <a class="sidebar-link" onclick="navigate('gcc')"><span class="sidebar-icon">🔒</span> GCC Private Market</a>
+      </div>
+      <div class="sidebar-label" style="margin-top:12px;">Member</div>
+      <div class="sidebar-section">
+        <a class="sidebar-link" onclick="showDashTab('weekly', this)"><span class="sidebar-icon">📰</span> Weekly Drop <div class="notif-dot"></div></a>
+        <a class="sidebar-link" onclick="showDashTab('rewards', this)"><span class="sidebar-icon">🎁</span> Move Smarter Rewards</a>
+        <a class="sidebar-link" onclick="showDashTab('profile', this)"><span class="sidebar-icon">👤</span> My Profile</a>
+        <a class="sidebar-link" onclick="showDashTab('billing', this)"><span class="sidebar-icon">💳</span> Billing & Plan</a>
+      </div>
+      <div class="sidebar-section" style="margin-top: 24px;">
+        <a class="sidebar-link" onclick="logout()" style="color: var(--red);"><span class="sidebar-icon">⏻</span> Logout</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dash-main">
+
+      <!-- Tab: Overview -->
+      <div id="dash-overview">
+        <div class="dash-welcome">
+          <div>
+            <h2>Welcome back, <span class="gold" id="dashUserName">Alex</span> 👋</h2>
+            <p>Here's your intelligence summary for this week.</p>
+          </div>
+          <div class="member-badge">⭐ Pro Member</div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-label">Countries Saved</div>
+            <div class="stat-value">5</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Jobs Bookmarked</div>
+            <div class="stat-value">12</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Referrals Made</div>
+            <div class="stat-value">3</div>
+          </div>
+          <div class="stat-card highlight">
+            <div class="stat-label">Weekly Drop</div>
+            <div class="stat-value">🔴 New!</div>
+          </div>
+        </div>
+
+        <div class="dash-grid">
+          <!-- Weekly Drop Teaser -->
+          <div class="dash-card">
+            <div class="dash-card-title">📰 Weekly Intelligence Drop — Issue #47 <span class="new-badge">NEW</span></div>
+            <div class="drop-item"><div class="drop-bullet">●</div><div>Germany announces 2025 Opportunity Card expansion — here's who qualifies and how to apply before the August deadline.</div></div>
+            <div class="drop-item"><div class="drop-bullet">●</div><div>Saudi Vision 2030 Phase 3 hiring surge: 1,200+ new expat roles projected in Q2 across engineering, finance, and healthcare.</div></div>
+            <div class="drop-item"><div class="drop-bullet">●</div><div>Singapore's new Tech.Pass criteria changes — lowered salary threshold opens eligibility to thousands more professionals.</div></div>
+            <div style="margin-top: 18px;">
+              <button class="btn btn-gold btn-sm" onclick="showDashTab('weekly', null)">Read Full Drop →</button>
+            </div>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="dash-card">
+            <div class="dash-card-title">🕐 Recent Activity</div>
+            <div class="activity-item">
+              <div class="activity-dot"></div>
+              <div class="activity-text">Bookmarked: Senior Petroleum Engineer at Saudi Aramco</div>
+              <div class="activity-time">2h ago</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot"></div>
+              <div class="activity-text">Viewed: Germany Country Intelligence Report</div>
+              <div class="activity-time">5h ago</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot"></div>
+              <div class="activity-text">Read: Weekly Drop Issue #46</div>
+              <div class="activity-time">1d ago</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot"></div>
+              <div class="activity-text">Saved Portugal to your Countries list</div>
+              <div class="activity-time">2d ago</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot"></div>
+              <div class="activity-text">Applied via GlobalHound: Finance Manager at ADNOC</div>
+              <div class="activity-time">3d ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Weekly Drop -->
+      <div id="dash-weekly" style="display:none;">
+        <div class="dash-card" style="margin-bottom: 20px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+            <div>
+              <div style="font-size:12px; color: var(--gold); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:6px;">Issue #47 · Monday, March 31, 2025</div>
+              <h2 style="font-family: var(--font-display); font-size: 26px;">This Week's Intelligence Drop</h2>
+            </div>
+            <span class="new-badge" style="background: var(--green); font-size:11px; padding: 4px 10px; border-radius:50px; color:#000; font-weight:700;">NEW</span>
+          </div>
+          <div class="gold-divider" style="margin-bottom: 24px;"></div>
+
+          <h3 style="font-size:15px; font-weight:600; margin-bottom:14px; color: var(--gold);">🇩🇪 Germany — Opportunity Card Expansion</h3>
+          <p style="font-size:14px; color: var(--text-muted); line-height:1.7; margin-bottom:20px;">Germany's Federal Employment Agency has announced an expansion of the Chancenkarte (Opportunity Card) program for 2025. The updated criteria now include professionals with a minimum of 3 years of work experience (down from 5) and degrees from 180 additional countries. The August 1st application window opens new pathways for professionals from Africa, South Asia, and Southeast Asia who were previously excluded. Key requirements: B1 German language OR 3 years experience in a shortage occupation. Full report in your Country Hub.</p>
+
+          <h3 style="font-size:15px; font-weight:600; margin-bottom:14px; color: var(--gold);">🇸🇦 Saudi Arabia — Vision 2030 Phase 3 Hiring Surge</h3>
+          <p style="font-size:14px; color: var(--text-muted); line-height:1.7; margin-bottom:20px;">NEOM, Saudi Aramco, and the Public Investment Fund have collectively signalled 1,200+ new expatriate roles across Q2 2025. Focus areas: civil engineering, project management, digital transformation, and specialist healthcare. Packages remain highly competitive with tax-free salaries, housing, and annual flight allowances. Check this week's GCC Private Market for 6 new listings from this surge.</p>
+
+          <h3 style="font-size:15px; font-weight:600; margin-bottom:14px; color: var(--gold);">🇸🇬 Singapore — Tech.Pass Criteria Update</h3>
+          <p style="font-size:14px; color: var(--text-muted); line-height:1.7; margin-bottom:20px;">Singapore's Ministry of Manpower has lowered the Tech.Pass fixed monthly salary threshold from SGD 22,500 to SGD 18,000 effective April 1st, 2025. This change expands eligibility to thousands more mid-senior tech professionals. Qualifying criteria: Either earn SGD 18K/mo from a leading tech firm, OR have 5+ years of experience and hold equity/leadership in a tech startup valued at $500M+.</p>
+        </div>
+      </div>
+
+      <!-- Tab: Rewards -->
+      <div id="dash-rewards" style="display:none;">
+        <div class="dash-card">
+          <div class="dash-card-title">🎁 Move Smarter Rewards — Your Referral Dashboard</div>
+          <p style="font-size:14px; color: var(--text-muted); margin-bottom:22px;">Refer globally minded friends and colleagues. Earn $15 credit for every member who signs up with your link.</p>
+
+          <div class="referral-box">
+            <div class="referral-link">globalhound.io/ref/alex2025</div>
+            <button class="btn btn-gold btn-sm" onclick="copyReferral()">📋 Copy</button>
+          </div>
+
+          <div class="ref-stats">
+            <div class="ref-stat"><div class="ref-stat-val">3</div><div class="ref-stat-label">Total Referrals</div></div>
+            <div class="ref-stat"><div class="ref-stat-val" style="color: var(--green);">$45</div><div class="ref-stat-label">Credits Earned</div></div>
+            <div class="ref-stat"><div class="ref-stat-val">5</div><div class="ref-stat-label">Next Reward At</div></div>
+          </div>
+
+          <div style="margin-bottom:18px;">
+            <div class="progress-bar"><div class="progress-fill" style="width: 60%;"></div></div>
+            <div class="progress-text">3 of 5 referrals complete — 2 more to unlock your next $30 bonus</div>
+          </div>
+
+          <div style="display:flex; gap: 12px;">
+            <button class="btn btn-gold btn-sm" onclick="copyReferral()">📋 Copy Referral Link</button>
+            <button class="btn btn-outline-gold btn-sm">💼 Share on LinkedIn</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Profile -->
+      <div id="dash-profile" style="display:none;">
+        <div class="dash-card">
+          <div class="dash-card-title">👤 My Profile</div>
+          <div style="display:flex; align-items:center; gap:20px; margin-bottom:28px; padding-bottom:28px; border-bottom: 1px solid var(--border-dim);">
+            <div class="author-avatar" style="width:72px;height:72px;font-size:28px;">AJ</div>
+            <div>
+              <div style="font-size:20px; font-weight:600;" id="profileName">Alex Johnson</div>
+              <div style="color:var(--text-muted); font-size:14px;" id="profileEmail">alex@example.com</div>
+              <div class="member-badge" style="margin-top:8px; display:inline-flex;">⭐ Pro Member</div>
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" value="Alex Johnson"></div>
+            <div class="form-group"><label class="form-label">Email Address</label><input class="form-input" value="alex@example.com"></div>
+            <div class="form-group"><label class="form-label">Current Country</label><input class="form-input" placeholder="Where are you based?"></div>
+            <div class="form-group"><label class="form-label">Target Countries</label><input class="form-input" placeholder="UAE, Germany, Canada..."></div>
+          </div>
+          <button class="btn btn-gold btn-sm" onclick="showToast('✓', 'Profile updated successfully!')">Save Changes</button>
+        </div>
+      </div>
+
+      <!-- Tab: Billing -->
+      <div id="dash-billing" style="display:none;">
+        <div class="dash-card">
+          <div class="dash-card-title">💳 Billing & Plan</div>
+          <div style="background: var(--bg-secondary); border-radius:12px; padding:24px; margin-bottom:20px; border: 1px solid var(--border);">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+              <div>
+                <div style="font-size:12px; color:var(--text-dim); margin-bottom:4px;">Current Plan</div>
+                <div style="font-size:22px; font-weight:700; color:var(--gold);">Pro — $79/month</div>
+              </div>
+              <div class="member-badge">⭐ Pro Member</div>
+            </div>
+            <div style="font-size:13px; color:var(--text-muted);">Next billing date: April 14, 2025 · Auto-renew enabled</div>
+          </div>
+          <div style="display:flex; gap:12px;">
+            <button class="btn btn-outline-gold btn-sm">Update Payment Method</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--red); border-color:rgba(248,113,113,0.3);">Cancel Subscription</button>
+          </div>
+          <p style="margin-top:16px; font-size:12px; color:var(--text-dim);">Payment processing is not active in this prototype. Stripe integration coming soon.</p>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ===================== PAGE: ABOUT ===================== -->
+<div class="page" id="page-about">
+  <div class="page-header">
+    <span class="section-label">Our Story</span>
+    <h1>The Intelligence Layer Behind<br>Your Next Move</h1>
+    <div class="gold-divider center"></div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="about-grid">
+        <div>
+          <span class="section-label">Why GlobalHound Exists</span>
+          <h2 class="section-title" style="font-size:32px;">We built what we wished existed.</h2>
+          <div class="gold-divider"></div>
+          <p style="color:var(--text-muted); line-height:1.8; margin-top:20px; margin-bottom:20px; font-size:15px;">International job searching is broken. Talented professionals spend months applying to employers who don't sponsor visas, researching countries with outdated data, and missing out on opportunities that are never publicly listed — especially in the GCC region where the best roles are shared exclusively through private networks.</p>
+          <p style="color:var(--text-muted); line-height:1.8; margin-bottom:28px; font-size:15px;">GlobalHound was built to close that gap. We aggregate, verify, and curate the intelligence that globally mobile professionals need: which countries are genuinely welcoming to international talent, which employers actually deliver on their relocation promises, and what the real packages look like in markets like Saudi Arabia, UAE, and Qatar.</p>
+          <div style="display:flex; gap:32px;">
+            <div>
+              <div style="font-family: var(--font-display); font-size: 36px; font-weight:900; color: var(--gold);">30+</div>
+              <div style="font-size:13px; color:var(--text-muted);">Countries Tracked</div>
+            </div>
+            <div>
+              <div style="font-family: var(--font-display); font-size: 36px; font-weight:900; color: var(--gold);">500+</div>
+              <div style="font-size:13px; color:var(--text-muted);">Verified Employers</div>
+            </div>
+            <div>
+              <div style="font-family: var(--font-display); font-size: 36px; font-weight:900; color: var(--gold);">4,200+</div>
+              <div style="font-size:13px; color:var(--text-muted);">Active Members</div>
+            </div>
+          </div>
+        </div>
+        <div class="about-visual">
+          <div class="big-icon">🐾</div>
+          <h3 style="font-family: var(--font-display); font-size:22px; margin-bottom:16px;">What We Track</h3>
+          <ul style="list-style:none; text-align:left;">
+            <li style="padding:10px 0; border-bottom:1px solid var(--border-dim); font-size:14px; color:var(--text-muted); display:flex; gap:10px;">✓ <span>Visa pathways & immigration timelines</span></li>
+            <li style="padding:10px 0; border-bottom:1px solid var(--border-dim); font-size:14px; color:var(--text-muted); display:flex; gap:10px;">✓ <span>Employer sponsorship track records</span></li>
+            <li style="padding:10px 0; border-bottom:1px solid var(--border-dim); font-size:14px; color:var(--text-muted); display:flex; gap:10px;">✓ <span>GCC private job market packages</span></li>
+            <li style="padding:10px 0; border-bottom:1px solid var(--border-dim); font-size:14px; color:var(--text-muted); display:flex; gap:10px;">✓ <span>Tax levels & take-home salary impact</span></li>
+            <li style="padding:10px 0; border-bottom:1px solid var(--border-dim); font-size:14px; color:var(--text-muted); display:flex; gap:10px;">✓ <span>Cost of living & relocation costs</span></li>
+            <li style="padding:10px 0; font-size:14px; color:var(--text-muted); display:flex; gap:10px;">✓ <span>Immigration policy changes weekly</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-top:60px; margin-bottom:20px;">
+        <span class="section-label">The Team</span>
+        <h2 class="section-title" style="font-size:32px;">Built by Movers, For Movers</h2>
+      </div>
+
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-avatar">MR</div>
+          <div class="team-name">Mohamed Rejbani</div>
+          <div class="team-role">Founder & CEO</div>
+          <div class="team-bio">Serial entrepreneur and international relocation veteran with experience across the GCC, Europe, and North America. Built GlobalHound after personally navigating the opacity of the international job market.</div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">SR</div>
+          <div class="team-name">Samira R.</div>
+          <div class="team-role">Head of Research & Intelligence</div>
+          <div class="team-bio">Former immigration policy analyst with 10+ years tracking global mobility trends. Oversees all country profiles, employer verification, and the weekly intelligence drop content.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <span>© 2025 GlobalHound. All rights reserved.</span>
+        <button class="btn btn-ghost btn-sm" onclick="navigate('home')">← Back to Home</button>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ===================== PAGE: LOGIN ===================== -->
+<div class="page" id="page-login">
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div style="font-size:36px; margin-bottom:8px;">🐾</div>
+        <h2>Welcome Back</h2>
+        <p>Log in to access your GlobalHound intelligence</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input class="form-input" type="email" id="loginEmail" placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" id="loginPassword" placeholder="••••••••">
+        <div class="form-forgot"><a href="#">Forgot password?</a></div>
+      </div>
+      <button class="btn btn-gold w-full" style="margin-top:8px;" onclick="login()">Login to GlobalHound</button>
+      <div class="auth-footer">
+        Don't have an account? <a onclick="navigate('register')">Start Free Trial →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE: REGISTER ===================== -->
+<div class="page" id="page-register">
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div style="font-size:36px; margin-bottom:8px;">🐾</div>
+        <h2>Create Your Account</h2>
+        <p>Start your free trial — no credit card required</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input class="form-input" type="text" id="regName" placeholder="Your full name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input class="form-input" type="email" id="regEmail" placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" id="regPassword" placeholder="Create a password">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Choose Your Plan</label>
+        <select class="form-select form-input" id="regPlan">
+          <option value="Free">Free Trial (Limited Access)</option>
+          <option value="Starter">Starter — $29/month</option>
+          <option value="Pro">Pro — $79/month</option>
+        </select>
+      </div>
+      <button class="btn btn-gold w-full" style="margin-top:8px;" onclick="register()">Create My Account →</button>
+      <div class="auth-footer">
+        Already a member? <a onclick="navigate('login')">Login →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== JAVASCRIPT ===================== -->
+<script>
+// ===== DATA =====
+const JOBS = [
+  { id:1, title:'Senior Software Engineer', company:'SAP', country:'Germany', flag:'🇩🇪', salary:'€75,000 – €95,000', sponsorship:'Visa Sponsor', industry:'Tech', locked:false },
+  { id:2, title:'Financial Analyst', company:'Citibank', country:'Singapore', flag:'🇸🇬', salary:'SGD 80,000 – 110,000', sponsorship:'Relocation Support', industry:'Finance', locked:false },
+  { id:3, title:'Mechanical Engineer', company:'SNC-Lavalin', country:'Canada', flag:'🇨🇦', salary:'CAD 90,000 – 120,000', sponsorship:'Both', industry:'Engineering', locked:false },
+  { id:4, title:'Data Scientist', company:'Booking.com', country:'Netherlands', flag:'🇳🇱', salary:'€70,000 – €90,000', sponsorship:'Visa Sponsor', industry:'Tech', locked:false },
+  { id:5, title:'Registered Nurse', company:'NHS', country:'United Kingdom', flag:'🇬🇧', salary:'£38,000 – £48,000', sponsorship:'Both', industry:'Healthcare', locked:false },
+  { id:6, title:'UX Designer', company:'Canva', country:'Australia', flag:'🇦🇺', salary:'AUD 95,000 – 130,000', sponsorship:'Visa Sponsor', industry:'Tech', locked:false },
+  { id:7, title:'Project Manager', company:'Siemens', country:'Germany', flag:'🇩🇪', salary:'€65,000 – €85,000', sponsorship:'Relocation Support', industry:'Engineering', locked:true },
+  { id:8, title:'Cybersecurity Analyst', company:'IBM', country:'Canada', flag:'🇨🇦', salary:'CAD 85,000 – 115,000', sponsorship:'Both', industry:'Tech', locked:true },
+  { id:9, title:'Hospitality Manager', company:'Marriott', country:'UAE', flag:'🇦🇪', salary:'AED 18,000 – 24,000/mo', sponsorship:'Both', industry:'Hospitality', locked:false },
+  { id:10, title:'Supply Chain Lead', company:'Nestlé', country:'Portugal', flag:'🇵🇹', salary:'€55,000 – €72,000', sponsorship:'Visa Sponsor', industry:'Operations', locked:true },
+];
+
+const GCC_JOBS = [
+  { id:1, title:'Senior Petroleum Engineer', company:'Saudi Aramco', country:'Saudi Arabia', flag:'🇸🇦', base:'SAR 35,000/mo', housing:'SAR 12,000/mo', flights:'Annual return', lang:'English Only', industry:'Oil & Gas', locked:false },
+  { id:2, title:'Finance Manager', company:'ADNOC', country:'UAE', flag:'🇦🇪', base:'AED 45,000/mo', housing:'AED 15,000/mo', flights:'Annual + family', lang:'Bilingual Preferred', industry:'Finance', locked:false },
+  { id:3, title:'Senior Architect', company:'Emaar Properties', country:'UAE', flag:'🇦🇪', base:'AED 38,000/mo', housing:'AED 14,000/mo', flights:'Annual return', lang:'English Only', industry:'Real Estate', locked:true },
+  { id:4, title:'Education Program Director', company:'Qatar Foundation', country:'Qatar', flag:'🇶🇦', base:'QAR 42,000/mo', housing:'Furnished housing', flights:'Annual + family', lang:'English Only', industry:'Education', locked:true },
+  { id:5, title:'Reservoir Engineer', company:'Kuwait Oil Company', country:'Kuwait', flag:'🇰🇼', base:'KWD 3,200/mo', housing:'KWD 800/mo', flights:'Annual return', lang:'Arabic Required', industry:'Oil & Gas', locked:true },
+  { id:6, title:'Retail Regional Manager', company:'Majid Al Futtaim', country:'UAE', flag:'🇦🇪', base:'AED 35,000/mo', housing:'AED 12,000/mo', flights:'Annual return', lang:'English Only', industry:'Retail', locked:true },
+  { id:7, title:'IT Infrastructure Manager', company:'Saudi Telecom (STC)', country:'Saudi Arabia', flag:'🇸🇦', base:'SAR 30,000/mo', housing:'SAR 10,000/mo', flights:'Annual return', lang:'Bilingual Preferred', industry:'Telecom', locked:true },
+  { id:8, title:'Healthcare Administrator', company:'Cleveland Clinic Abu Dhabi', country:'UAE', flag:'🇦🇪', base:'AED 40,000/mo', housing:'Full relocation pkg', flights:'Annual + family', lang:'English Only', industry:'Healthcare', locked:true },
+];
+
+const COUNTRIES = [
+  { flag:'🇦🇪', name:'UAE', visaEase:8, tax:'Low', safety:8, business:9 },
+  { flag:'🇩🇪', name:'Germany', visaEase:7, tax:'High', safety:9, business:8 },
+  { flag:'🇨🇦', name:'Canada', visaEase:8, tax:'Medium', safety:9, business:8 },
+  { flag:'🇸🇬', name:'Singapore', visaEase:7, tax:'Low', safety:10, business:10 },
+  { flag:'🇵🇹', name:'Portugal', visaEase:9, tax:'Medium', safety:9, business:7 },
+  { flag:'🇳🇱', name:'Netherlands', visaEase:7, tax:'High', safety:9, business:8 },
+  { flag:'🇦🇺', name:'Australia', visaEase:6, tax:'Medium', safety:9, business:8 },
+  { flag:'🇸🇦', name:'Saudi Arabia', visaEase:6, tax:'Low', safety:7, business:8 },
+  { flag:'🇶🇦', name:'Qatar', visaEase:6, tax:'Low', safety:8, business:8 },
+  { flag:'🇬🇧', name:'United Kingdom', visaEase:5, tax:'High', safety:8, business:7 },
+  { flag:'🇳🇿', name:'New Zealand', visaEase:7, tax:'Medium', safety:9, business:7 },
+  { flag:'🇯🇵', name:'Japan', visaEase:5, tax:'Medium', safety:10, business:7 },
+];
+
+// ===== AUTH STATE =====
+let isLoggedIn = false;
+let currentUser = { name: 'Alex Johnson', plan: 'Pro', email: 'alex@example.com' };
+
+function checkAuth() {
+  const saved = localStorage.getItem('gh_user');
+  if (saved) {
+    isLoggedIn = true;
+    currentUser = JSON.parse(saved);
+    updateNavForAuth();
+  }
+}
+
+function updateNavForAuth() {
+  const nav = document.getElementById('navActions');
+  if (isLoggedIn) {
+    nav.innerHTML = `
+      <button class="btn btn-ghost btn-sm" onclick="navigate('dashboard')">⊞ Dashboard</button>
+      <button class="btn btn-gold btn-sm" onclick="navigate('dashboard')">${currentUser.name.split(' ')[0]}</button>
+    `;
+    const nameEl = document.getElementById('dashUserName');
+    if (nameEl) nameEl.textContent = currentUser.name.split(' ')[0];
+    const profileNameEl = document.getElementById('profileName');
+    if (profileNameEl) profileNameEl.textContent = currentUser.name;
+    const profileEmailEl = document.getElementById('profileEmail');
+    if (profileEmailEl) profileEmailEl.textContent = currentUser.email;
+  } else {
+    nav.innerHTML = `
+      <button class="btn btn-ghost btn-sm" onclick="navigate('login')">Login</button>
+      <button class="btn btn-gold btn-sm" onclick="navigate('register')">Start Free Trial</button>
+    `;
+  }
+}
+
+function login() {
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  if (!email || !password) { showToast('⚠️', 'Please enter your email and password.'); return; }
+  currentUser = { name: 'Alex Johnson', plan: 'Pro', email };
+  localStorage.setItem('gh_user', JSON.stringify(currentUser));
+  isLoggedIn = true;
+  updateNavForAuth();
+  showToast('✓', 'Welcome back! Redirecting to your dashboard...');
+  setTimeout(() => navigate('dashboard'), 1000);
+}
+
+function register() {
+  const name = document.getElementById('regName').value;
+  const email = document.getElementById('regEmail').value;
+  const password = document.getElementById('regPassword').value;
+  const plan = document.getElementById('regPlan').value;
+  if (!name || !email || !password) { showToast('⚠️', 'Please fill in all fields.'); return; }
+  currentUser = { name, plan, email };
+  localStorage.setItem('gh_user', JSON.stringify(currentUser));
+  isLoggedIn = true;
+  updateNavForAuth();
+  showToast('✓', `Welcome to GlobalHound, ${name.split(' ')[0]}! Setting up your dashboard...`);
+  setTimeout(() => navigate('dashboard'), 1200);
+}
+
+function logout() {
+  localStorage.removeItem('gh_user');
+  isLoggedIn = false;
+  updateNavForAuth();
+  showToast('✓', 'You have been logged out.');
+  navigate('home');
+}
+
+// ===== NAVIGATION =====
+function navigate(page) {
+  // Guard dashboard
+  if (page === 'dashboard' && !isLoggedIn) { navigate('login'); return; }
+
+  // Hide all pages
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+
+  // Update nav links
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.classList.toggle('active', a.dataset.page === page);
+  });
+
+  // Render content
+  if (page === 'jobs') renderJobs(JOBS);
+  if (page === 'gcc') renderGCC();
+  if (page === 'countries') renderCountries();
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===== RENDER JOBS =====
+function getSponsorClass(s) {
+  if (s === 'Visa Sponsor') return 'tag-visa';
+  if (s === 'Relocation Support') return 'tag-reloc';
+  return 'tag-both';
+}
+
+function renderJobs(jobs) {
+  const grid = document.getElementById('jobsGrid');
+  grid.innerHTML = jobs.map(j => `
+    <div class="job-card${j.locked ? ' locked' : ''}">
+      ${j.locked ? `<div class="lock-overlay">
+        <div class="lock-icon">🔒</div>
+        <p>Members Only Listing</p>
+        <button class="btn btn-gold btn-sm" onclick="navigate('register')">Unlock Access</button>
+      </div>` : ''}
+      <div class="job-top">
+        <div>
+          <div class="job-company">${j.company}</div>
+          <div class="job-title">${j.title}</div>
+        </div>
+        <div style="font-size:26px; flex-shrink:0;">${j.flag}</div>
+      </div>
+      <div class="job-location">📍 ${j.country}</div>
+      <div class="job-salary">${j.salary}</div>
+      <div class="job-tags">
+        <span class="tag ${getSponsorClass(j.sponsorship)}">${j.sponsorship}</span>
+        <span class="tag tag-industry">${j.industry}</span>
+      </div>
+      <button class="btn btn-outline-gold btn-sm" style="margin-top:4px;" onclick="${j.locked ? "navigate('register')" : "showToast('✓','Job saved to your bookmarks!')"}">
+        ${j.locked ? '🔒 Unlock to View' : 'View Details'}
+      </button>
+    </div>
+  `).join('');
+}
+
+function filterJobs() {
+  const search = document.getElementById('jobSearch').value.toLowerCase();
+  const country = document.getElementById('filterCountry').value;
+  const industry = document.getElementById('filterIndustry').value;
+  const sponsorship = document.getElementById('filterSponsorship').value;
+
+  const filtered = JOBS.filter(j => {
+    const matchSearch = !search || j.title.toLowerCase().includes(search) || j.company.toLowerCase().includes(search);
+    const matchCountry = !country || j.country === country;
+    const matchIndustry = !industry || j.industry === industry;
+    const matchSponsorship = !sponsorship || j.sponsorship === sponsorship;
+    return matchSearch && matchCountry && matchIndustry && matchSponsorship;
+  });
+  renderJobs(filtered);
+}
+
+// ===== RENDER GCC =====
+function getLangClass(l) {
+  if (l === 'Arabic Required') return 'tag-arabic';
+  if (l === 'Bilingual Preferred') return 'tag-bilingual';
+  return 'tag-english';
+}
+
+function renderGCC() {
+  const grid = document.getElementById('gccGrid');
+  grid.innerHTML = GCC_JOBS.map(j => `
+    <div class="gcc-card">
+      ${j.locked ? `<div class="lock-overlay" style="border-radius: var(--radius); backdrop-filter: blur(8px);">
+        <div class="lock-icon">🔒</div>
+        <p>Unlock with Pro Membership</p>
+        <button class="btn btn-gold btn-sm" onclick="navigate('register')">Go Pro — $79/mo</button>
+      </div>` : ''}
+      <div class="gcc-top">
+        <div>
+          <div class="gcc-company">${j.company} · ${j.flag} ${j.country}</div>
+          <div class="gcc-title">${j.title}</div>
+        </div>
+        <span class="tag tag-industry">${j.industry}</span>
+      </div>
+      <div class="gcc-package">
+        <div class="pkg-item"><span class="pkg-label">Base Salary</span><span class="pkg-val">${j.base}</span></div>
+        <div class="pkg-item"><span class="pkg-label">Housing</span><span class="pkg-val">${j.housing}</span></div>
+        <div class="pkg-item"><span class="pkg-label">Flights</span><span class="pkg-val">${j.flights}</span></div>
+      </div>
+      <div class="gcc-footer">
+        <span class="tag ${getLangClass(j.lang)}">${j.lang}</span>
+        <button class="btn btn-outline-gold btn-sm" onclick="${j.locked ? "navigate('register')" : "showToast('✓','Application details unlocked!')"}">
+          ${j.locked ? '🔒 Unlock Details' : 'View Full Details'}
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===== RENDER COUNTRIES =====
+function getBarColor(score) {
+  if (score >= 8) return 'fill-green';
+  if (score >= 6) return 'fill-gold';
+  return 'fill-red';
+}
+function getTaxClass(t) {
+  if (t === 'Low') return 'chip-low';
+  if (t === 'Medium') return 'chip-medium';
+  return 'chip-high';
+}
+
+function renderCountries() {
+  const grid = document.getElementById('countriesGrid');
+  grid.innerHTML = COUNTRIES.map(c => `
+    <div class="country-card" onclick="${isLoggedIn ? `showToast('🌍','Loading ${c.name} intelligence report...')` : "navigate('register')"}">
+      <div class="country-flag">${c.flag}</div>
+      <div class="country-name">${c.name}</div>
+      <div class="metric">
+        <div class="metric-label"><span>Visa Ease</span><span class="metric-val">${c.visaEase}/10</span></div>
+        <div class="metric-bar"><div class="metric-fill ${getBarColor(c.visaEase)}" style="width:${c.visaEase*10}%"></div></div>
+      </div>
+      <div class="metric">
+        <div class="metric-label"><span>Safety Rating</span><span class="metric-val">${c.safety}/10</span></div>
+        <div class="metric-bar"><div class="metric-fill ${getBarColor(c.safety)}" style="width:${c.safety*10}%"></div></div>
+      </div>
+      <div class="metric">
+        <div class="metric-label"><span>Business Climate</span><span class="metric-val">${c.business}/10</span></div>
+        <div class="metric-bar"><div class="metric-fill ${getBarColor(c.business)}" style="width:${c.business*10}%"></div></div>
+      </div>
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-top:12px;">
+        <span style="font-size:12px; color:var(--text-dim);">Tax Level</span>
+        <span class="metric-chip ${getTaxClass(c.tax)}">${c.tax}</span>
+      </div>
+      <div class="country-cta">
+        <button class="btn btn-outline-gold btn-sm w-full" onclick="event.stopPropagation(); ${isLoggedIn ? `showToast('🌍','Opening ${c.name} report...')` : "navigate('register')"}">
+          ${isLoggedIn ? 'View Full Report' : '🔒 Members Only'}
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===== DASHBOARD TABS =====
+function showDashTab(tab, el) {
+  ['overview','weekly','rewards','profile','billing'].forEach(t => {
+    const el = document.getElementById('dash-' + t);
+    if (el) el.style.display = 'none';
+  });
+  const target = document.getElementById('dash-' + tab);
+  if (target) target.style.display = 'block';
+
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+  if (el) el.classList.add('active');
+}
+
+// ===== FAQ =====
+function toggleFaq(btn) {
+  const item = btn.parentElement;
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+
+// ===== TOAST =====
+function showToast(icon, msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastIcon').textContent = icon;
+  document.getElementById('toastMsg').textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+}
+
+// ===== COPY REFERRAL =====
+function copyReferral() {
+  navigator.clipboard.writeText('https://globalhound.io/ref/alex2025').then(() => {
+    showToast('📋', 'Referral link copied to clipboard!');
+  }).catch(() => {
+    showToast('📋', 'Copy: globalhound.io/ref/alex2025');
+  });
+}
+
+// ===== INIT =====
+window.addEventListener('DOMContentLoaded', () => {
+  checkAuth();
+  // Pre-render all grids so they're ready
+  renderJobs(JOBS);
+  renderGCC();
+  renderCountries();
+});
+
+// Navbar scroll effect
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('navbar');
+  if (window.scrollY > 20) {
+    nav.style.background = 'rgba(8,13,26,0.98)';
+    nav.style.borderBottomColor = 'rgba(201,168,76,0.2)';
+  } else {
+    nav.style.background = 'rgba(8,13,26,0.92)';
+    nav.style.borderBottomColor = 'rgba(255,255,255,0.06)';
+  }
+});
+</script>
+</body>
+</html>
