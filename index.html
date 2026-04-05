@@ -1671,7 +1671,7 @@ function login() {
   // If admin credentials entered on main site, redirect straight to admin dashboard
   if (email === 'admin@globalhound.io' && password === 'admin2025') {
     showToast('🔐', 'Admin detected — redirecting to Command Centre...');
-    setTimeout(() => { window.location.href = '/admin.html'; }, 1200);
+    setTimeout(() => { window.location.href = window.location.origin + '/admin.html'; }, 1200);
     return;
   }
 
