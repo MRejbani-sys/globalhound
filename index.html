@@ -1391,14 +1391,14 @@
           <div style="display:flex; align-items:center; gap:20px; margin-bottom:28px; padding-bottom:28px; border-bottom: 1px solid var(--border-dim);">
             <div class="author-avatar" style="width:72px;height:72px;font-size:28px;">AJ</div>
             <div>
-              <div style="font-size:20px; font-weight:600;" id="profileName">Alex Johnson</div>
-              <div style="color:var(--text-muted); font-size:14px;" id="profileEmail">alex@example.com</div>
+              <div style="font-size:20px; font-weight:600;" id="profileName"></div>
+              <div style="color:var(--text-muted); font-size:14px;" id="profileEmail"></div>
               <div class="member-badge" style="margin-top:8px; display:inline-flex;">⭐ Pro Member</div>
             </div>
           </div>
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-            <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" value="Alex Johnson"></div>
-            <div class="form-group"><label class="form-label">Email Address</label><input class="form-input" value="alex@example.com"></div>
+            <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="profileNameInput" placeholder="Your full name"></div>
+            <div class="form-group"><label class="form-label">Email Address</label><input class="form-input" id="profileEmailInput" placeholder="your@email.com"></div>
             <div class="form-group"><label class="form-label">Current Country</label><input class="form-input" placeholder="Where are you based?"></div>
             <div class="form-group"><label class="form-label">Target Countries</label><input class="form-input" placeholder="UAE, Germany, Canada..."></div>
           </div>
@@ -1616,15 +1616,24 @@ const COUNTRIES = [
 ];
 
 // ===== AUTH STATE =====
+// Uses 'gh_member' key — completely separate from admin's storage
 let isLoggedIn = false;
-let currentUser = { name: 'Alex Johnson', plan: 'Pro', email: 'alex@example.com' };
+let currentUser = { name: '', plan: '', email: '' };
 
 function checkAuth() {
-  const saved = localStorage.getItem('gh_user');
+  const saved = localStorage.getItem('gh_member');
   if (saved) {
-    isLoggedIn = true;
-    currentUser = JSON.parse(saved);
-    updateNavForAuth();
+    try {
+      const parsed = JSON.parse(saved);
+      // Extra guard: reject if this looks like an admin session
+      if (parsed && parsed.name && parsed.name !== 'ADMIN') {
+        isLoggedIn = true;
+        currentUser = parsed;
+        updateNavForAuth();
+      }
+    } catch(e) {
+      localStorage.removeItem('gh_member');
+    }
   }
 }
 
@@ -1641,6 +1650,10 @@ function updateNavForAuth() {
     if (profileNameEl) profileNameEl.textContent = currentUser.name;
     const profileEmailEl = document.getElementById('profileEmail');
     if (profileEmailEl) profileEmailEl.textContent = currentUser.email;
+    const profileNameInput = document.getElementById('profileNameInput');
+    if (profileNameInput) profileNameInput.value = currentUser.name;
+    const profileEmailInput = document.getElementById('profileEmailInput');
+    if (profileEmailInput) profileEmailInput.value = currentUser.email;
   } else {
     nav.innerHTML = `
       <button class="btn btn-ghost btn-sm" onclick="navigate('login')">Login</button>
@@ -1650,25 +1663,41 @@ function updateNavForAuth() {
 }
 
 function login() {
-  const email = document.getElementById('loginEmail').value;
+  const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
   if (!email || !password) { showToast('⚠️', 'Please enter your email and password.'); return; }
-  currentUser = { name: 'Alex Johnson', plan: 'Pro', email };
-  localStorage.setItem('gh_user', JSON.stringify(currentUser));
+
+  // ===== ADMIN INTERCEPT =====
+  // If admin credentials entered on main site, redirect straight to admin dashboard
+  if (email === 'admin@globalhound.io' && password === 'admin2025') {
+    showToast('🔐', 'Admin detected — redirecting to Command Centre...');
+    setTimeout(() => { window.location.href = '/admin.html'; }, 1200);
+    return;
+  }
+
+  // ===== MEMBER LOGIN =====
+  const existing = localStorage.getItem('gh_member');
+  let user = existing ? JSON.parse(existing) : null;
+  if (!user || user.email !== email) {
+    const displayName = email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    user = { name: displayName, plan: 'Free', email };
+  }
+  currentUser = user;
+  localStorage.setItem('gh_member', JSON.stringify(currentUser));
   isLoggedIn = true;
   updateNavForAuth();
-  showToast('✓', 'Welcome back! Redirecting to your dashboard...');
+  showToast('✓', `Welcome back, ${currentUser.name.split(' ')[0]}! Redirecting...`);
   setTimeout(() => navigate('dashboard'), 1000);
 }
 
 function register() {
-  const name = document.getElementById('regName').value;
-  const email = document.getElementById('regEmail').value;
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
   const password = document.getElementById('regPassword').value;
   const plan = document.getElementById('regPlan').value;
   if (!name || !email || !password) { showToast('⚠️', 'Please fill in all fields.'); return; }
   currentUser = { name, plan, email };
-  localStorage.setItem('gh_user', JSON.stringify(currentUser));
+  localStorage.setItem('gh_member', JSON.stringify(currentUser));
   isLoggedIn = true;
   updateNavForAuth();
   showToast('✓', `Welcome to GlobalHound, ${name.split(' ')[0]}! Setting up your dashboard...`);
@@ -1676,8 +1705,9 @@ function register() {
 }
 
 function logout() {
-  localStorage.removeItem('gh_user');
+  localStorage.removeItem('gh_member');
   isLoggedIn = false;
+  currentUser = { name: '', plan: '', email: '' };
   updateNavForAuth();
   showToast('✓', 'You have been logged out.');
   navigate('home');
