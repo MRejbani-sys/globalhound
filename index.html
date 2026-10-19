@@ -1625,6 +1625,7 @@ let JOBS = [];        // global job listings (visible ones)
 let GCC_JOBS = [];    // GCC listings (visible ones)
 let LOCKED = [];      // members-only teasers shown to visitors
 let listingsLoaded = false;
+let recoverySession = null; // kept in memory so a password reset still works if the browser drops stored sessions
 
 // ===== HELPERS =====
 function esc(v) {
@@ -1657,7 +1658,7 @@ async function loadProfile(user) {
   if (error) console.error(error);
   const p = data || {};
   if (p.status === 'suspended') {
-    await sb.auth.signOut();
+    await sb.auth.signOut({ scope: 'local' });
     showToast('🚫', 'This account has been suspended. Contact support for help.');
     return false;
   }
@@ -1671,6 +1672,20 @@ async function loadProfile(user) {
     target_countries: p.target_countries || '',
   };
   isLoggedIn = true;
+  return true;
+}
+
+async function ensureSession(fallback) {
+  let { data } = await sb.auth.getSession();
+  if (!data.session && fallback) {
+    const r = await sb.auth.setSession({ access_token: fallback.access_token, refresh_token: fallback.refresh_token });
+    if (r.error) console.error(r.error);
+    data = (await sb.auth.getSession()).data;
+  }
+  if (!data.session) {
+    showToast('⚠️', 'Your browser did not keep you signed in. Please allow site data for this site (or try another browser) and try again.');
+    return false;
+  }
   return true;
 }
 
@@ -1719,6 +1734,7 @@ async function login() {
   const { data, error } = await sb.auth.signInWithPassword({ email, password });
   setBusy(btn, false);
   if (error) { showToast('⚠️', friendlyAuthError(error)); return; }
+  if (!(await ensureSession(data.session))) return;
   if (!(await loadProfile(data.user))) return;
   document.getElementById('loginPassword').value = '';
   updateNavForAuth();
@@ -1768,9 +1784,16 @@ async function setNewPassword() {
   if (pw.length < 8) { showToast('⚠️', 'Password must be at least 8 characters.'); return; }
   const btn = document.getElementById('newPasswordBtn');
   setBusy(btn, true, 'Saving…');
+  if (!(await ensureSession(recoverySession))) { setBusy(btn, false); return; }
   const { error } = await sb.auth.updateUser({ password: pw });
   setBusy(btn, false);
-  if (error) { showToast('⚠️', friendlyAuthError(error)); return; }
+  if (error) {
+    showToast('⚠️', /session missing/i.test(error.message)
+      ? 'This reset link has expired or was already used. Click "Forgot password?" on the login page to get a new one.'
+      : friendlyAuthError(error));
+    return;
+  }
+  recoverySession = null;
   document.getElementById('newPassword').value = '';
   showToast('✓', 'Password updated. You are logged in.');
   navigate('dashboard');
@@ -1795,7 +1818,7 @@ async function saveProfile() {
 }
 
 async function logout() {
-  await sb.auth.signOut();
+  await sb.auth.signOut({ scope: 'local' });
   clearUser();
   updateNavForAuth();
   await loadListings();
@@ -2052,6 +2075,7 @@ sb.auth.onAuthStateChange((event, session) => {
   // Run outside the callback, as Supabase recommends
   setTimeout(async () => {
     if (event === 'PASSWORD_RECOVERY') {
+      recoverySession = session;
       if (session) await loadProfile(session.user);
       updateNavForAuth();
       navigate('reset');
@@ -2073,7 +2097,7 @@ sb.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_IN' && authReady && !isLoggedIn && session) {
       if (await loadProfile(session.user)) { updateNavForAuth(); await loadListings(); }
     }
-    if (event === 'SIGNED_OUT' && isLoggedIn) {
+    if (event === 'SIGNED_OUT' && isLoggedIn && !recoverySession) {
       clearUser(); updateNavForAuth(); await loadListings();
     }
   }, 0);

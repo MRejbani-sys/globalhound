@@ -498,6 +498,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
     <label class="login-label">Password</label>
     <input class="login-input" type="password" id="adminPass" placeholder="••••••••" autocomplete="current-password">
     <button class="login-btn" id="adminLoginBtn" onclick="adminLogin()">Access Command Centre →</button>
+    <p style="text-align:center; margin-top:12px;"><a href="#" onclick="event.preventDefault(); adminForgotPassword()" style="font-size:12px; color: var(--gold);">Forgot password?</a></p>
     <div class="login-error" id="loginError"></div>
     <p style="font-size:11px; color: var(--dim); text-align:center; margin-top:16px;">Use your GlobalHound account. Only accounts with admin access can enter.</p>
   </div>
@@ -1189,6 +1190,12 @@ async function adminLogin() {
     errEl.style.display = 'block'; return;
   }
   document.getElementById('adminPass').value = '';
+  let sess = (await sb.auth.getSession()).data.session;
+  if (!sess && data.session) { await sb.auth.setSession({ access_token: data.session.access_token, refresh_token: data.session.refresh_token }); sess = (await sb.auth.getSession()).data.session; }
+  if (!sess) {
+    errEl.textContent = 'Your password was correct, but this browser did not keep you signed in. Allow site data for this site, or try another browser.';
+    errEl.style.display = 'block'; return;
+  }
   await enterIfAdmin(data.user);
 }
 
@@ -1197,8 +1204,9 @@ async function enterIfAdmin(user, silent) {
   const { data, error } = await sb.from('admins').select('user_id').eq('user_id', user.id).maybeSingle();
   if (error || !data) {
     if (silent) return; // a member is signed in on the main site; leave their session alone
-    await sb.auth.signOut();
-    errEl.textContent = 'This account does not have admin access.';
+    if (error) console.error(error);
+    await sb.auth.signOut({ scope: 'local' });
+    errEl.textContent = error ? 'Could not check admin access: ' + error.message : 'This account does not have admin access.';
     errEl.style.display = 'block';
     return;
   }
@@ -1209,11 +1217,22 @@ async function enterIfAdmin(user, silent) {
 }
 
 async function adminLogout() {
-  await sb.auth.signOut();
+  await sb.auth.signOut({ scope: 'local' });
   ME = null;
   clearInterval(clockTimer);
   document.getElementById('adminApp').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
+}
+
+async function adminForgotPassword() {
+  const email = document.getElementById('adminEmail').value.trim();
+  const errEl = document.getElementById('loginError');
+  if (!email) { errEl.textContent = 'Enter your email above first, then click "Forgot password?".'; errEl.style.display = 'block'; return; }
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/' });
+  errEl.textContent = error
+    ? (/rate limit/i.test(error.message) ? 'Too many emails sent recently. Please wait an hour and try again.' : error.message)
+    : 'If that email has an account, a reset link is on its way. It opens the main site, where you can set a new password.';
+  errEl.style.display = 'block';
 }
 
 async function changeMyPassword() {
