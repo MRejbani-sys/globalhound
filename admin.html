@@ -494,12 +494,12 @@ tr:hover td { background: rgba(255,255,255,0.02); }
       <p>Admin Command Centre</p>
     </div>
     <label class="login-label">Admin Email</label>
-    <input class="login-input" type="email" id="adminEmail" placeholder="admin@globalhound.io" value="admin@globalhound.io">
+    <input class="login-input" type="email" id="adminEmail" placeholder="you@example.com" autocomplete="username">
     <label class="login-label">Password</label>
-    <input class="login-input" type="password" id="adminPass" placeholder="••••••••" value="admin2025">
-    <button class="login-btn" onclick="adminLogin()">Access Command Centre →</button>
-    <div class="login-error" id="loginError">Invalid credentials. Try admin@globalhound.io / admin2025</div>
-    <p style="font-size:11px; color: var(--dim); text-align:center; margin-top:16px;">Default: admin@globalhound.io / admin2025</p>
+    <input class="login-input" type="password" id="adminPass" placeholder="••••••••" autocomplete="current-password">
+    <button class="login-btn" id="adminLoginBtn" onclick="adminLogin()">Access Command Centre →</button>
+    <div class="login-error" id="loginError"></div>
+    <p style="font-size:11px; color: var(--dim); text-align:center; margin-top:16px;">Use your GlobalHound account. Only accounts with admin access can enter.</p>
   </div>
 </div>
 
@@ -544,17 +544,21 @@ tr:hover td { background: rgba(255,255,255,0.02); }
         <div class="nav-section-label" style="margin-top:10px;">Members</div>
         <div class="nav-item" onclick="showPage('users', this)">
           <span class="nav-icon">👥</span><span>All Users</span>
-          <span class="nav-badge">247</span>
+          <span class="nav-badge" id="navUsersCount">0</span>
         </div>
-        <div class="nav-item" onclick="showPage('registrations', this)">
+        <div class="nav-item" id="navReg" onclick="showPage('registrations', this)">
           <span class="nav-icon">🆕</span><span>Registrations</span>
-          <span class="nav-badge gold">12</span>
+          <span class="nav-badge gold" id="navRegCount">0</span>
         </div>
         <div class="nav-item" onclick="showPage('subscriptions', this)">
           <span class="nav-icon">💳</span><span>Subscriptions</span>
         </div>
 
         <div class="nav-section-label" style="margin-top:10px;">Content</div>
+        <div class="nav-item" id="navReview" onclick="showPage('review', this)">
+          <span class="nav-icon">🕵️</span><span>Pending Review</span>
+          <span class="nav-badge gold" id="navReviewCount" style="display:none;">0</span>
+        </div>
         <div class="nav-item" onclick="showPage('jobs', this)">
           <span class="nav-icon">💼</span><span>Job Listings</span>
         </div>
@@ -579,10 +583,10 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 
       <div class="sidebar-footer">
         <div class="admin-info">
-          <div class="admin-avatar">MR</div>
+          <div class="admin-avatar" id="adminAvatar">—</div>
           <div>
-            <div class="admin-name">M. Rejbani</div>
-            <div class="admin-role">Super Admin</div>
+            <div class="admin-name" id="adminName" style="max-width:150px;overflow:hidden;text-overflow:ellipsis;">—</div>
+            <div class="admin-role">Admin</div>
           </div>
         </div>
         <button class="logout-btn" onclick="adminLogout()">⏻ &nbsp;Sign Out</button>
@@ -598,66 +602,39 @@ tr:hover td { background: rgba(255,255,255,0.02); }
         <div class="topbar-right">
           <div class="live-dot">Live</div>
           <div class="topbar-time" id="topbarClock"></div>
-          <button class="topbar-btn" onclick="window.open('https://globalhound.vercel.app','_blank')">🌐 View Site</button>
-          <button class="topbar-btn" onclick="showToast('✓','Data refreshed!')">↻ Refresh</button>
+          <button class="topbar-btn" onclick="window.open(window.location.origin + '/','_blank')">🌐 View Site</button>
+          <button class="topbar-btn" onclick="refreshData()">↻ Refresh</button>
         </div>
       </div>
 
       <!-- ===================== PAGE: OVERVIEW ===================== -->
       <div class="page active" id="page-overview">
         <div class="page-title">Command Centre</div>
-        <div class="page-sub">Sunday, April 5, 2026 · All systems operational</div>
+        <div class="page-sub" id="overviewDate"></div>
 
-        <!-- Alerts -->
-        <div class="alert warning">
-          <div class="alert-icon">⚠️</div>
-          <div class="alert-body">
-            <div class="alert-title">12 New Registrations Awaiting Review</div>
-            <div class="alert-text">Users signed up in the last 48 hours. Review and verify before granting full access.</div>
-          </div>
-          <button class="btn btn-sm btn-ghost" onclick="showPage('registrations', null)" style="flex-shrink:0;">Review →</button>
-        </div>
-        <div class="alert success">
-          <div class="alert-icon">✅</div>
-          <div class="alert-body">
-            <div class="alert-title">Weekly Drop Issue #47 Published</div>
-            <div class="alert-text">Sent to 247 active members. Open rate: 68.4%</div>
-          </div>
-        </div>
+        <div id="overviewAlerts"></div>
 
         <!-- Stats -->
         <div class="stats-grid">
           <div class="stat-card green">
-            <div class="stat-header">
-              <span class="stat-icon">👥</span>
-              <span class="stat-change up">↑ 18%</span>
-            </div>
-            <div class="stat-value">247</div>
+            <div class="stat-header"><span class="stat-icon">👥</span></div>
+            <div class="stat-value" id="statMembers">—</div>
             <div class="stat-label">Total Members</div>
           </div>
-          <div class="stat-card gold">
-            <div class="stat-header">
-              <span class="stat-icon">💳</span>
-              <span class="stat-change up">↑ 12%</span>
-            </div>
-            <div class="stat-value">$9,841</div>
-            <div class="stat-label">Monthly Revenue (MRR)</div>
-          </div>
           <div class="stat-card blue">
-            <div class="stat-header">
-              <span class="stat-icon">🆕</span>
-              <span class="stat-change up">↑ 34%</span>
-            </div>
-            <div class="stat-value">12</div>
+            <div class="stat-header"><span class="stat-icon">🆕</span></div>
+            <div class="stat-value" id="statNew">—</div>
             <div class="stat-label">New This Week</div>
           </div>
+          <div class="stat-card gold">
+            <div class="stat-header"><span class="stat-icon">💼</span></div>
+            <div class="stat-value" id="statActiveListings">—</div>
+            <div class="stat-label">Live Listings</div>
+          </div>
           <div class="stat-card red">
-            <div class="stat-header">
-              <span class="stat-icon">🚪</span>
-              <span class="stat-change down">↓ 3%</span>
-            </div>
-            <div class="stat-value">4</div>
-            <div class="stat-label">Cancellations This Month</div>
+            <div class="stat-header"><span class="stat-icon">🕵️</span></div>
+            <div class="stat-value" id="statPending">—</div>
+            <div class="stat-label">Awaiting Review</div>
           </div>
         </div>
 
@@ -675,32 +652,20 @@ tr:hover td { background: rgba(255,255,255,0.02); }
           <!-- Revenue Breakdown -->
           <div class="card">
             <div class="card-header">
-              <div class="card-title">💰 Plan Distribution</div>
+              <div class="card-title">💰 Plan Distribution (granted)</div>
             </div>
             <div class="card-body">
               <div class="donut-wrap">
-                <svg width="100" height="100" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="38" fill="none" stroke="#172035" stroke-width="16"/>
-                  <circle cx="50" cy="50" r="38" fill="none" stroke="#C9A84C" stroke-width="16" stroke-dasharray="143 96" stroke-dashoffset="24" transform="rotate(-90 50 50)"/>
-                  <circle cx="50" cy="50" r="38" fill="none" stroke="#5B9EFF" stroke-width="16" stroke-dasharray="72 167" stroke-dashoffset="-119" transform="rotate(-90 50 50)"/>
-                  <circle cx="50" cy="50" r="38" fill="none" stroke="#3A4460" stroke-width="16" stroke-dasharray="24 215" stroke-dashoffset="-191" transform="rotate(-90 50 50)"/>
-                  <text x="50" y="54" text-anchor="middle" fill="#EEF0F5" font-size="13" font-family="Syne">247</text>
-                </svg>
+                <svg width="100" height="100" viewBox="0 0 100 100" id="planDonut"></svg>
                 <div class="donut-legend">
-                  <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div><div><div style="font-size:13px;font-weight:600;">Pro Plan</div><div style="font-size:11px;color:var(--muted);">149 members · 60%</div></div></div>
-                  <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div><div><div style="font-size:13px;font-weight:600;">Starter Plan</div><div style="font-size:11px;color:var(--muted);">78 members · 32%</div></div></div>
-                  <div class="legend-item"><div class="legend-dot" style="background:var(--dim)"></div><div><div style="font-size:13px;font-weight:600;">Free Trial</div><div style="font-size:11px;color:var(--muted);">20 members · 8%</div></div></div>
+                  <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div><div><div style="font-size:13px;font-weight:600;">Pro Plan</div><div style="font-size:11px;color:var(--muted);" id="legendPro"></div></div></div>
+                  <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div><div><div style="font-size:13px;font-weight:600;">Starter Plan</div><div style="font-size:11px;color:var(--muted);" id="legendStarter"></div></div></div>
+                  <div class="legend-item"><div class="legend-dot" style="background:var(--dim)"></div><div><div style="font-size:13px;font-weight:600;">Free Trial</div><div style="font-size:11px;color:var(--muted);" id="legendFree"></div></div></div>
                 </div>
               </div>
               <div style="margin-top:20px;">
-                <div class="progress-wrap">
-                  <div class="progress-label"><span>Pro ($79/mo)</span><span style="color:var(--gold);">$11,771/mo potential</span></div>
-                  <div class="progress-bar"><div class="progress-fill" style="width:60%;background:var(--gold);"></div></div>
-                </div>
-                <div class="progress-wrap">
-                  <div class="progress-label"><span>Starter ($29/mo)</span><span>$2,262/mo</span></div>
-                  <div class="progress-bar"><div class="progress-fill" style="width:32%;background:var(--blue);"></div></div>
-                </div>
+                <div class="metric-row"><span class="metric-key">Requested at sign-up</span><span class="metric-val" style="color:var(--gold);" id="requestedPro"></span></div>
+                <div class="metric-row"><span class="metric-key">Requested at sign-up</span><span class="metric-val" id="requestedStarter"></span></div>
               </div>
             </div>
           </div>
@@ -710,52 +675,9 @@ tr:hover td { background: rgba(255,255,255,0.02); }
           <!-- Recent Activity -->
           <div class="card">
             <div class="card-header">
-              <div class="card-title">🕐 Live Activity Feed</div>
-              <span class="badge badge-green">● Live</span>
+              <div class="card-title">🕐 Recent Sign-ups</div>
             </div>
-            <div class="card-body" style="padding-top:8px;">
-              <div class="activity-item">
-                <div class="activity-dot" style="background:var(--green)"></div>
-                <div class="activity-body">
-                  <div class="activity-text"><strong>Fatima A.</strong> upgraded from Starter → Pro</div>
-                  <div class="activity-meta">2 minutes ago · Cairo, Egypt</div>
-                </div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-dot" style="background:var(--blue)"></div>
-                <div class="activity-body">
-                  <div class="activity-text"><strong>James K.</strong> registered — Starter Plan</div>
-                  <div class="activity-meta">14 minutes ago · Lagos, Nigeria</div>
-                </div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-dot" style="background:var(--gold)"></div>
-                <div class="activity-body">
-                  <div class="activity-text"><strong>Ananya S.</strong> read Weekly Drop #47</div>
-                  <div class="activity-meta">31 minutes ago · Mumbai, India</div>
-                </div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-dot" style="background:var(--amber)"></div>
-                <div class="activity-body">
-                  <div class="activity-text"><strong>Carlos M.</strong> bookmarked 3 GCC listings</div>
-                  <div class="activity-meta">48 minutes ago · São Paulo, Brazil</div>
-                </div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-dot" style="background:var(--red)"></div>
-                <div class="activity-body">
-                  <div class="activity-text"><strong>David O.</strong> cancelled subscription</div>
-                  <div class="activity-meta">1 hour ago · London, UK</div>
-                </div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-dot" style="background:var(--green)"></div>
-                <div class="activity-body">
-                  <div class="activity-text"><strong>Priya R.</strong> registered — Pro Plan</div>
-                  <div class="activity-meta">2 hours ago · Bangalore, India</div>
-                </div>
-              </div>
+            <div class="card-body" style="padding-top:8px;"><div id="activityFeed"></div>
             </div>
           </div>
 
@@ -764,42 +686,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
             <div class="card-header">
               <div class="card-title">🌍 Member Geography</div>
             </div>
-            <div class="card-body">
-              <div class="geo-row">
-                <div class="geo-flag">🇮🇳</div>
-                <div class="geo-bar-wrap"><div class="geo-label">India</div><div class="geo-bar"><div class="geo-fill" style="width:68%"></div></div></div>
-                <div class="geo-pct">68 members</div>
-              </div>
-              <div class="geo-row">
-                <div class="geo-flag">🇳🇬</div>
-                <div class="geo-bar-wrap"><div class="geo-label">Nigeria</div><div class="geo-bar"><div class="geo-fill" style="width:52%"></div></div></div>
-                <div class="geo-pct">52 members</div>
-              </div>
-              <div class="geo-row">
-                <div class="geo-flag">🇵🇭</div>
-                <div class="geo-bar-wrap"><div class="geo-label">Philippines</div><div class="geo-bar"><div class="geo-fill" style="width:38%"></div></div></div>
-                <div class="geo-pct">38 members</div>
-              </div>
-              <div class="geo-row">
-                <div class="geo-flag">🇪🇬</div>
-                <div class="geo-bar-wrap"><div class="geo-label">Egypt</div><div class="geo-bar"><div class="geo-fill" style="width:29%"></div></div></div>
-                <div class="geo-pct">29 members</div>
-              </div>
-              <div class="geo-row">
-                <div class="geo-flag">🇬🇭</div>
-                <div class="geo-bar-wrap"><div class="geo-label">Ghana</div><div class="geo-bar"><div class="geo-fill" style="width:22%"></div></div></div>
-                <div class="geo-pct">22 members</div>
-              </div>
-              <div class="geo-row">
-                <div class="geo-flag">🇧🇷</div>
-                <div class="geo-bar-wrap"><div class="geo-label">Brazil</div><div class="geo-bar"><div class="geo-fill" style="width:18%"></div></div></div>
-                <div class="geo-pct">18 members</div>
-              </div>
-              <div class="geo-row">
-                <div class="geo-flag">🌐</div>
-                <div class="geo-bar-wrap"><div class="geo-label">Other</div><div class="geo-bar"><div class="geo-fill" style="width:20%"></div></div></div>
-                <div class="geo-pct">20 members</div>
-              </div>
+            <div class="card-body"><div id="geoList"></div>
             </div>
           </div>
         </div>
@@ -808,16 +695,16 @@ tr:hover td { background: rgba(255,255,255,0.02); }
       <!-- ===================== PAGE: REGISTRATIONS ===================== -->
       <div class="page" id="page-registrations">
         <div class="page-title">New Registrations</div>
-        <div class="page-sub">12 new signups in the last 48 hours — review and manage access</div>
+        <div class="page-sub" id="regSub"></div>
         <div class="card">
           <div class="card-header">
             <div class="card-title">🆕 Recent Signups</div>
-            <button class="btn btn-sm btn-gold" onclick="showToast('✓','All pending users approved!')">Approve All Pending</button>
+            
           </div>
           <div class="table-wrap">
             <table id="regTable">
               <thead><tr>
-                <th>Name</th><th>Email</th><th>Plan</th><th>Country</th><th>Signed Up</th><th>Status</th><th>Actions</th>
+                <th>Name</th><th>Email</th><th>Asked For</th><th>Current Plan</th><th>Country</th><th>Signed Up</th><th>Actions</th>
               </tr></thead>
               <tbody id="regTbody"></tbody>
             </table>
@@ -841,7 +728,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
           <div class="table-wrap">
             <table>
               <thead><tr>
-                <th>Member</th><th>Email</th><th>Plan</th><th>Country</th><th>Joined</th><th>Activity</th><th>Actions</th>
+                <th>Member</th><th>Email</th><th>Plan</th><th>Country</th><th>Joined</th><th>Status</th><th>Actions</th>
               </tr></thead>
               <tbody id="usersTbody"></tbody>
             </table>
@@ -851,7 +738,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 
       <!-- ===================== PAGE: SUBSCRIPTIONS ===================== -->
       <div class="page" id="page-subscriptions">
-        <div class="page-title">Subscriptions & Revenue</div>
+        <div class="page-title">Subscriptions & Revenue <span class="badge badge-amber" style="font-size:10px;vertical-align:middle;">Demo data — not connected yet</span></div>
         <div class="page-sub">Track MRR, plan distribution, and billing health</div>
         <div class="stats-grid">
           <div class="stat-card gold">
@@ -917,13 +804,13 @@ tr:hover td { background: rgba(255,255,255,0.02); }
         <div class="page-title">Job Listings Manager</div>
         <div class="page-sub">Add, edit, or remove listings from the Visa-Friendly Jobs Portal</div>
         <div style="display:flex; gap:12px; margin-bottom:20px;">
-          <button class="btn btn-gold" onclick="openAddJobModal()">+ Add New Listing</button>
-          <button class="btn btn-ghost" onclick="showToast('✓','Listings exported to CSV!')">↓ Export CSV</button>
+          <button class="btn btn-gold" onclick="openListingModal('global')">+ Add New Listing</button>
+          <button class="btn btn-ghost" onclick="exportCSV('global')">↓ Export CSV</button>
         </div>
         <div class="card">
           <div class="table-wrap">
             <table id="jobsAdminTable">
-              <thead><tr><th>Job Title</th><th>Company</th><th>Country</th><th>Salary</th><th>Sponsorship</th><th>Industry</th><th>Status</th><th>Actions</th></tr></thead>
+              <thead><tr><th>Job Title</th><th>Company</th><th>Country</th><th>Salary</th><th>Sponsorship</th><th>Industry</th><th>Access</th><th>Status</th><th>Actions</th></tr></thead>
               <tbody id="jobsAdminTbody"></tbody>
             </table>
           </div>
@@ -933,16 +820,33 @@ tr:hover td { background: rgba(255,255,255,0.02); }
       <!-- ===================== PAGE: GCC ===================== -->
       <div class="page" id="page-gcc">
         <div class="page-title">GCC Private Listings Manager</div>
-        <div class="page-sub">Manage exclusive Middle East listings visible only to Pro members</div>
+        <div class="page-sub">Add, edit, or remove GCC & Middle East listings</div>
         <div style="display:flex; gap:12px; margin-bottom:20px;">
-          <button class="btn btn-gold" onclick="openAddGCCModal()">+ Add GCC Listing</button>
-          <button class="btn btn-ghost" onclick="showToast('✓','GCC listings exported!')">↓ Export</button>
+          <button class="btn btn-gold" onclick="openListingModal('gcc')">+ Add GCC Listing</button>
+          <button class="btn btn-ghost" onclick="exportCSV('gcc')">↓ Export CSV</button>
         </div>
         <div class="card">
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Job Title</th><th>Company</th><th>Country</th><th>Base Salary</th><th>Language</th><th>Access</th><th>Actions</th></tr></thead>
+              <thead><tr><th>Job Title</th><th>Company</th><th>Country</th><th>Base Salary</th><th>Language</th><th>Access</th><th>Status</th><th>Actions</th></tr></thead>
               <tbody id="gccAdminTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== PAGE: PENDING REVIEW ===================== -->
+      <div class="page" id="page-review">
+        <div class="page-title">Pending Review</div>
+        <div class="page-sub" id="reviewSub"></div>
+        <div style="display:flex; gap:12px; margin-bottom:20px;">
+          <button class="btn btn-gold" id="approveAllBtn" onclick="approveAllPending()">✓ Approve All</button>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Market</th><th>Job Title</th><th>Company</th><th>Country</th><th>Salary</th><th>Source</th><th>Found</th><th>Actions</th></tr></thead>
+              <tbody id="reviewTbody"></tbody>
             </table>
           </div>
         </div>
@@ -950,7 +854,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 
       <!-- ===================== PAGE: COUNTRIES ===================== -->
       <div class="page" id="page-countries">
-        <div class="page-title">Country Intelligence Manager</div>
+        <div class="page-title">Country Intelligence Manager <span class="badge badge-amber" style="font-size:10px;vertical-align:middle;">Demo data — not connected yet</span></div>
         <div class="page-sub">Edit scores, tax levels, and data for each country profile</div>
         <div class="card">
           <div class="table-wrap">
@@ -964,7 +868,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 
       <!-- ===================== PAGE: WEEKLY DROP ===================== -->
       <div class="page" id="page-weekly">
-        <div class="page-title">Weekly Intelligence Drop</div>
+        <div class="page-title">Weekly Intelligence Drop <span class="badge badge-amber" style="font-size:10px;vertical-align:middle;">Demo data — not connected yet</span></div>
         <div class="page-sub">Create and publish your weekly briefing to all active members</div>
 
         <div class="grid-2" style="margin-bottom:20px;">
@@ -1037,7 +941,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 
       <!-- ===================== PAGE: ANALYTICS ===================== -->
       <div class="page" id="page-analytics">
-        <div class="page-title">Analytics</div>
+        <div class="page-title">Analytics <span class="badge badge-amber" style="font-size:10px;vertical-align:middle;">Demo data — not connected yet</span></div>
         <div class="page-sub">Performance metrics, traffic, and engagement data</div>
         <div class="stats-grid">
           <div class="stat-card blue">
@@ -1093,7 +997,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 
       <!-- ===================== PAGE: REFERRALS ===================== -->
       <div class="page" id="page-referrals">
-        <div class="page-title">Referral Programme</div>
+        <div class="page-title">Referral Programme <span class="badge badge-amber" style="font-size:10px;vertical-align:middle;">Demo data — not connected yet</span></div>
         <div class="page-sub">Track Move Smarter Rewards — member referrals and credit payouts</div>
         <div class="stats-grid">
           <div class="stat-card green"><div class="stat-header"><span class="stat-icon">🎁</span><span class="stat-change up">↑ 22%</span></div><div class="stat-value">89</div><div class="stat-label">Total Referrals Made</div></div>
@@ -1120,7 +1024,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
       <!-- ===================== PAGE: SETTINGS ===================== -->
       <div class="page" id="page-settings">
         <div class="page-title">Settings</div>
-        <div class="page-sub">Control site behaviour, integrations, and admin access</div>
+        <div class="page-sub">Admin access is live. Site controls and pricing below are not connected yet.</div>
 
         <div class="grid-2">
           <div class="card">
@@ -1207,15 +1111,15 @@ tr:hover td { background: rgba(255,255,255,0.02); }
           <div class="card-body">
             <div class="form-row">
               <div class="form-group">
-                <label class="form-label">Admin Email</label>
-                <input class="form-input" value="admin@globalhound.io">
+                <label class="form-label">Signed in as</label>
+                <input class="form-input" id="settingsEmail" readonly style="opacity:0.6;">
               </div>
               <div class="form-group">
                 <label class="form-label">New Password</label>
-                <input class="form-input" type="password" placeholder="Leave blank to keep current">
+                <input class="form-input" type="password" id="myNewPassword" placeholder="At least 10 characters" autocomplete="new-password">
               </div>
             </div>
-            <button class="btn btn-gold btn-sm" onclick="showToast('✓','Admin credentials updated!')">Update Credentials</button>
+            <button class="btn btn-gold btn-sm" onclick="changeMyPassword()">Change My Password</button>
           </div>
         </div>
       </div>
@@ -1225,81 +1129,503 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 </div>
 
 <!-- ===== JAVASCRIPT ===== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
-// ===== AUTH =====
-const ADMIN_EMAIL = 'admin@globalhound.io';
-const ADMIN_PASS = 'admin2025';
+// ===== SUPABASE CONNECTION =====
+const SUPABASE_URL = 'https://erhvxwidikxtdpfiltfi.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_0rswCMEeZSBDzWmbic_-BQ_mv9LP3Qz';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-function adminLogin() {
-  const e = document.getElementById('adminEmail').value;
-  const p = document.getElementById('adminPass').value;
-  if (e === ADMIN_EMAIL && p === ADMIN_PASS) {
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('adminApp').style.display = 'block';
-    initDashboard();
-  } else {
-    document.getElementById('loginError').style.display = 'block';
+// ===== STATE =====
+let ME = null;
+let PROFILES = [];
+let LISTINGS = [];
+let clockTimer = null;
+
+const FLAGS = {
+  'UAE':'🇦🇪','United Arab Emirates':'🇦🇪','Saudi Arabia':'🇸🇦','Qatar':'🇶🇦','Kuwait':'🇰🇼','Oman':'🇴🇲','Bahrain':'🇧🇭',
+  'Germany':'🇩🇪','Singapore':'🇸🇬','Canada':'🇨🇦','Netherlands':'🇳🇱','United Kingdom':'🇬🇧','UK':'🇬🇧','Australia':'🇦🇺',
+  'Portugal':'🇵🇹','Ireland':'🇮🇪','New Zealand':'🇳🇿','Japan':'🇯🇵','United States':'🇺🇸','USA':'🇺🇸','France':'🇫🇷',
+  'Spain':'🇪🇸','Italy':'🇮🇹','Sweden':'🇸🇪','Norway':'🇳🇴','Denmark':'🇩🇰','Finland':'🇫🇮','Switzerland':'🇨🇭','Austria':'🇦🇹',
+  'Belgium':'🇧🇪','Poland':'🇵🇱','Malta':'🇲🇹','Egypt':'🇪🇬','Libya':'🇱🇾','Morocco':'🇲🇦','South Africa':'🇿🇦','Nigeria':'🇳🇬',
+  'Kenya':'🇰🇪','India':'🇮🇳','Malaysia':'🇲🇾','Hong Kong':'🇭🇰','South Korea':'🇰🇷','China':'🇨🇳','Brazil':'🇧🇷','Mexico':'🇲🇽'
+};
+
+// ===== HELPERS =====
+function esc(v) {
+  return String(v ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+}
+function safeUrl(u) {
+  try { const x = new URL(u); return (x.protocol === 'https:' || x.protocol === 'http:') ? x.href : ''; } catch { return ''; }
+}
+function fmtDate(d) { return d ? new Date(d).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }) : '—'; }
+function ago(d) {
+  if (!d) return '—';
+  const s = (Date.now() - new Date(d).getTime()) / 1000;
+  if (s < 60) return 'just now';
+  if (s < 3600) return Math.floor(s / 60) + 'm ago';
+  if (s < 86400) return Math.floor(s / 3600) + 'h ago';
+  if (s < 86400 * 30) return Math.floor(s / 86400) + 'd ago';
+  return fmtDate(d);
+}
+function initials(n) { return (n || '?').split(/[\s@.]+/).filter(Boolean).slice(0, 2).map(s => s[0].toUpperCase()).join('') || '?'; }
+function planBadge(p) { return `<span class="badge ${p==='Pro'?'badge-gold':p==='Starter'?'badge-blue':'badge-dim'}">${esc(p)}</span>`; }
+function setText(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
+function fail(error, msg) { console.error(error); showToast('⚠️', msg || (error && error.message) || 'Something went wrong.'); }
+
+// ===== AUTH =====
+async function adminLogin() {
+  const email = document.getElementById('adminEmail').value.trim();
+  const password = document.getElementById('adminPass').value;
+  const errEl = document.getElementById('loginError');
+  errEl.style.display = 'none';
+  if (!email || !password) { errEl.textContent = 'Enter your email and password.'; errEl.style.display = 'block'; return; }
+  const btn = document.getElementById('adminLoginBtn');
+  btn.disabled = true; btn.textContent = 'Checking…';
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  btn.disabled = false; btn.textContent = 'Access Command Centre →';
+  if (error) {
+    errEl.textContent = /invalid login/i.test(error.message) ? 'Email or password is incorrect.' : error.message;
+    errEl.style.display = 'block'; return;
   }
+  document.getElementById('adminPass').value = '';
+  await enterIfAdmin(data.user);
 }
 
-document.addEventListener('keypress', e => { if (e.key === 'Enter') adminLogin(); });
+async function enterIfAdmin(user, silent) {
+  const errEl = document.getElementById('loginError');
+  const { data, error } = await sb.from('admins').select('user_id').eq('user_id', user.id).maybeSingle();
+  if (error || !data) {
+    if (silent) return; // a member is signed in on the main site; leave their session alone
+    await sb.auth.signOut();
+    errEl.textContent = 'This account does not have admin access.';
+    errEl.style.display = 'block';
+    return;
+  }
+  ME = user;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('adminApp').style.display = 'block';
+  await initDashboard();
+}
 
-function adminLogout() {
+async function adminLogout() {
+  await sb.auth.signOut();
+  ME = null;
+  clearInterval(clockTimer);
   document.getElementById('adminApp').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
 }
 
-// ===== DATA =====
-const USERS = [
-  { name:'Alex Johnson', email:'alex@example.com', plan:'Pro', country:'🇬🇧 UK', joined:'Jan 12, 2026', activity:'2h ago' },
-  { name:'Fatima Al-Rashidi', email:'fatima@mail.com', plan:'Pro', country:'🇪🇬 Egypt', joined:'Apr 4, 2026', activity:'5m ago' },
-  { name:'James Kwesi', email:'james.k@gmail.com', plan:'Starter', country:'🇳🇬 Nigeria', joined:'Apr 4, 2026', activity:'14m ago' },
-  { name:'Priya Rao', email:'priya.r@in.com', plan:'Pro', country:'🇮🇳 India', joined:'Apr 3, 2026', activity:'1h ago' },
-  { name:'Carlos Mendez', email:'carlos@brazil.com', plan:'Pro', country:'🇧🇷 Brazil', joined:'Apr 3, 2026', activity:'48m ago' },
-  { name:'Ananya Singh', email:'ananya.s@gmail.com', plan:'Starter', country:'🇮🇳 India', joined:'Mar 29, 2026', activity:'31m ago' },
-  { name:'Kwame Asante', email:'kwame@gh.com', plan:'Pro', country:'🇬🇭 Ghana', joined:'Mar 24, 2026', activity:'3h ago' },
-  { name:'Sarah Moussa', email:'sarah.m@mail.com', plan:'Pro', country:'🇨🇦 Canada', joined:'Mar 15, 2026', activity:'1d ago' },
-  { name:'David Okafor', email:'d.okafor@uk.com', plan:'Free', country:'🇬🇧 UK', joined:'Mar 10, 2026', activity:'2d ago' },
-  { name:'Min-Ji Park', email:'minji@korea.kr', plan:'Starter', country:'🇰🇷 Korea', joined:'Feb 28, 2026', activity:'5h ago' },
-];
+async function changeMyPassword() {
+  const pw = document.getElementById('myNewPassword').value;
+  if (pw.length < 10) { showToast('⚠️', 'Use at least 10 characters for the admin password.'); return; }
+  const { error } = await sb.auth.updateUser({ password: pw });
+  if (error) return fail(error);
+  document.getElementById('myNewPassword').value = '';
+  showToast('✓', 'Your password has been changed.');
+}
 
-const NEW_REGS = [
-  { name:'Ibrahim Hassan', email:'ibr.hassan@mail.com', plan:'Pro', country:'🇸🇦 Saudi Arabia', time:'2h ago', status:'pending' },
-  { name:'Ngozi Adeyemi', email:'ngozi@ng.com', plan:'Starter', country:'🇳🇬 Nigeria', time:'4h ago', status:'pending' },
-  { name:'Ricardo Silva', email:'r.silva@pt.com', plan:'Free', country:'🇵🇹 Portugal', time:'6h ago', status:'pending' },
-  { name:'Yuki Tanaka', email:'yuki.t@jp.com', plan:'Pro', country:'🇯🇵 Japan', time:'8h ago', status:'approved' },
-  { name:'Amira Khalil', email:'amira@eg.com', plan:'Pro', country:'🇦🇪 UAE', time:'10h ago', status:'pending' },
-  { name:'Tendai Moyo', email:'tendai@zw.com', plan:'Starter', country:'🇿🇼 Zimbabwe', time:'14h ago', status:'pending' },
-  { name:'Keanu Lima', email:'keanu@br.com', plan:'Pro', country:'🇧🇷 Brazil', time:'18h ago', status:'approved' },
-  { name:'Fatou Diallo', email:'fatou@sn.com', plan:'Starter', country:'🇸🇳 Senegal', time:'22h ago', status:'pending' },
-  { name:'Sanjay Mehta', email:'sanjay@in.com', plan:'Pro', country:'🇮🇳 India', time:'28h ago', status:'pending' },
-  { name:'Leila Nasser', email:'leila@eg.com', plan:'Free', country:'🇪🇬 Egypt', time:'32h ago', status:'pending' },
-  { name:'Tunde Bello', email:'tunde@ng.com', plan:'Pro', country:'🇳🇬 Nigeria', time:'36h ago', status:'pending' },
-  { name:'Mei Wong', email:'mei.w@sg.com', plan:'Starter', country:'🇸🇬 Singapore', time:'44h ago', status:'approved' },
-];
+// ===== DATA LOADING =====
+async function loadAll() {
+  const [p, l, st] = await Promise.all([
+    sb.from('profiles').select('*').order('created_at', { ascending: false }),
+    sb.from('listings').select('*').order('created_at', { ascending: false }),
+    sb.rpc('admin_stats'),
+  ]);
+  if (p.error) fail(p.error, 'Could not load members.');
+  if (l.error) fail(l.error, 'Could not load listings.');
+  PROFILES = p.data || [];
+  LISTINGS = l.data || [];
+  renderOverview(st.data || {});
+  renderReg();
+  renderUsers();
+  renderJobs();
+  renderGCC();
+  renderReview();
+}
 
-const JOBS = [
-  { title:'Senior Software Engineer', company:'SAP', country:'🇩🇪 Germany', salary:'€75k–€95k', sponsorship:'Visa Sponsor', industry:'Tech', active:true },
-  { title:'Financial Analyst', company:'Citibank', country:'🇸🇬 Singapore', salary:'SGD 80k–110k', sponsorship:'Relocation Support', industry:'Finance', active:true },
-  { title:'Mechanical Engineer', company:'SNC-Lavalin', country:'🇨🇦 Canada', salary:'CAD 90k–120k', sponsorship:'Both', industry:'Engineering', active:true },
-  { title:'Data Scientist', company:'Booking.com', country:'🇳🇱 Netherlands', salary:'€70k–€90k', sponsorship:'Visa Sponsor', industry:'Tech', active:true },
-  { title:'Registered Nurse', company:'NHS', country:'🇬🇧 UK', salary:'£38k–£48k', sponsorship:'Both', industry:'Healthcare', active:true },
-  { title:'UX Designer', company:'Canva', country:'🇦🇺 Australia', salary:'AUD 95k–130k', sponsorship:'Visa Sponsor', industry:'Tech', active:false },
-  { title:'Project Manager', company:'Siemens', country:'🇩🇪 Germany', salary:'€65k–€85k', sponsorship:'Relocation Support', industry:'Engineering', active:true },
-  { title:'Supply Chain Lead', company:'Nestlé', country:'🇵🇹 Portugal', salary:'€55k–€72k', sponsorship:'Visa Sponsor', industry:'Operations', active:true },
-];
+async function refreshData() {
+  await loadAll();
+  showToast('↻', 'Data refreshed.');
+}
 
-const GCC = [
-  { title:'Senior Petroleum Engineer', company:'Saudi Aramco', country:'🇸🇦 Saudi Arabia', base:'SAR 35,000/mo', lang:'English Only', access:'Pro' },
-  { title:'Finance Manager', company:'ADNOC', country:'🇦🇪 UAE', base:'AED 45,000/mo', lang:'Bilingual', access:'Pro' },
-  { title:'Senior Architect', company:'Emaar Properties', country:'🇦🇪 UAE', base:'AED 38,000/mo', lang:'English Only', access:'Pro' },
-  { title:'Education Program Director', company:'Qatar Foundation', country:'🇶🇦 Qatar', base:'QAR 42,000/mo', lang:'English Only', access:'Pro' },
-  { title:'Reservoir Engineer', company:'Kuwait Oil Company', country:'🇰🇼 Kuwait', base:'KWD 3,200/mo', lang:'Arabic Required', access:'Pro' },
-  { title:'Retail Regional Manager', company:'Majid Al Futtaim', country:'🇦🇪 UAE', base:'AED 35,000/mo', lang:'English Only', access:'Pro' },
-  { title:'IT Infrastructure Manager', company:'STC', country:'🇸🇦 Saudi Arabia', base:'SAR 30,000/mo', lang:'Bilingual', access:'Pro' },
-  { title:'Healthcare Administrator', company:'Cleveland Clinic AD', country:'🇦🇪 UAE', base:'AED 40,000/mo', lang:'English Only', access:'Pro' },
-];
+// ===== OVERVIEW =====
+function renderOverview(st) {
+  const total = st.members ?? PROFILES.length;
+  const pending = LISTINGS.filter(l => l.status === 'pending').length;
+  const active = LISTINGS.filter(l => l.status === 'active').length;
+  setText('statMembers', total);
+  setText('statNew', st.new_7d ?? 0);
+  setText('statActiveListings', active);
+  setText('statPending', pending);
+  setText('navUsersCount', total);
+  setText('navRegCount', st.new_7d ?? 0);
+  setText('navReviewCount', pending);
+  document.getElementById('navReviewCount').style.display = pending ? '' : 'none';
+  setText('overviewDate', new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' }));
 
+  // Alerts
+  const alerts = [];
+  if (pending) alerts.push(`<div class="alert warning"><div class="alert-icon">🕵️</div><div class="alert-body"><div class="alert-title">${pending} listing${pending===1?'':'s'} waiting for your review</div><div class="alert-text">Found by the job agent or saved as pending. Nothing goes public until you approve it.</div></div><button class="btn btn-sm btn-ghost" onclick="showPage('review', document.getElementById('navReview'))" style="flex-shrink:0;">Review →</button></div>`);
+  const wantsPaid = PROFILES.filter(p => p.requested_plan !== 'Free' && p.plan !== p.requested_plan).length;
+  if (wantsPaid) alerts.push(`<div class="alert info"><div class="alert-icon">💳</div><div class="alert-body"><div class="alert-title">${wantsPaid} member${wantsPaid===1?'':'s'} asked for a paid plan</div><div class="alert-text">Payments aren't live yet. You can grant a plan manually from Registrations.</div></div><button class="btn btn-sm btn-ghost" onclick="showPage('registrations', document.getElementById('navReg'))" style="flex-shrink:0;">View →</button></div>`);
+  if (!total) alerts.push(`<div class="alert info"><div class="alert-icon">👋</div><div class="alert-body"><div class="alert-title">No members yet</div><div class="alert-text">Sign-ups from the website will appear here automatically.</div></div></div>`);
+  document.getElementById('overviewAlerts').innerHTML = alerts.join('');
+
+  // Plan distribution (by plan granted)
+  const plans = { Pro: 0, Starter: 0, Free: 0 };
+  PROFILES.forEach(p => { plans[p.plan] = (plans[p.plan] || 0) + 1; });
+  const n = PROFILES.length || 1;
+  const C = 2 * Math.PI * 38;
+  let off = 0;
+  const seg = (count, color) => {
+    const len = (count / n) * C;
+    const out = count ? `<circle cx="50" cy="50" r="38" fill="none" stroke="${color}" stroke-width="16" stroke-dasharray="${len} ${C - len}" stroke-dashoffset="${-off}" transform="rotate(-90 50 50)"/>` : '';
+    off += len; return out;
+  };
+  document.getElementById('planDonut').innerHTML =
+    `<circle cx="50" cy="50" r="38" fill="none" stroke="#172035" stroke-width="16"/>` +
+    seg(plans.Pro, '#C9A84C') + seg(plans.Starter, '#5B9EFF') + seg(plans.Free, '#3A4460') +
+    `<text x="50" y="54" text-anchor="middle" fill="#EEF0F5" font-size="13" font-family="Syne">${PROFILES.length}</text>`;
+  const pct = c => PROFILES.length ? Math.round((c / PROFILES.length) * 100) : 0;
+  setText('legendPro', `${plans.Pro} members · ${pct(plans.Pro)}%`);
+  setText('legendStarter', `${plans.Starter} members · ${pct(plans.Starter)}%`);
+  setText('legendFree', `${plans.Free} members · ${pct(plans.Free)}%`);
+  const req = st.requested || {};
+  setText('requestedPro', `${req.Pro || 0} asked for Pro`);
+  setText('requestedStarter', `${req.Starter || 0} asked for Starter`);
+
+  // Recent sign-ups feed
+  const recent = PROFILES.slice(0, 6);
+  document.getElementById('activityFeed').innerHTML = recent.length ? recent.map(p => `
+    <div class="activity-item">
+      <div class="activity-dot" style="background:${p.status==='suspended'?'var(--red)':'var(--green)'}"></div>
+      <div class="activity-body">
+        <div class="activity-text"><strong>${esc(p.full_name || p.email)}</strong> registered${p.requested_plan !== 'Free' ? ` — asked for ${esc(p.requested_plan)}` : ''}</div>
+        <div class="activity-meta">${ago(p.created_at)}${p.country ? ' · ' + esc(p.country) : ''}</div>
+      </div>
+    </div>`).join('') : '<p style="font-size:13px;color:var(--muted);padding:12px 0;">No sign-ups yet.</p>';
+
+  // Member geography (from profile country)
+  const geo = {};
+  PROFILES.forEach(p => { const c = (p.country || '').trim() || 'Not set'; geo[c] = (geo[c] || 0) + 1; });
+  const rows = Object.entries(geo).sort((a, b) => b[1] - a[1]).slice(0, 7);
+  const max = rows.length ? rows[0][1] : 1;
+  document.getElementById('geoList').innerHTML = rows.length ? rows.map(([c, k]) => `
+    <div class="geo-row">
+      <div class="geo-flag">${FLAGS[c] || '🌐'}</div>
+      <div class="geo-bar-wrap"><div class="geo-label">${esc(c)}</div><div class="geo-bar"><div class="geo-fill" style="width:${(k/max)*100}%"></div></div></div>
+      <div class="geo-pct">${k} member${k===1?'':'s'}</div>
+    </div>`).join('') : '<p style="font-size:13px;color:var(--muted);">Members add their country in their profile.</p>';
+
+  buildSignupChart(st.signups_by_week || []);
+}
+
+function buildSignupChart(weeks) {
+  const el = document.getElementById('signupChart');
+  if (!el) return;
+  const byWeek = {};
+  weeks.forEach(w => { byWeek[w.week] = w.n; });
+  const monday = d => { const x = new Date(d); const day = (x.getUTCDay() + 6) % 7; x.setUTCDate(x.getUTCDate() - day); return x.toISOString().slice(0, 10); };
+  const cols = [];
+  for (let i = 7; i >= 0; i--) {
+    const k = monday(Date.now() - i * 7 * 86400000);
+    cols.push({ k, v: byWeek[k] || 0 });
+  }
+  const max = Math.max(1, ...cols.map(c => c.v));
+  el.innerHTML = cols.map(c => `
+    <div class="chart-bar-col">
+      <div class="chart-bar-outer">
+        <div class="chart-bar-fill" data-val="${c.v}" style="height:${Math.max((c.v/max)*100, c.v ? 4 : 0)}%;background:linear-gradient(180deg,var(--gold),rgba(201,168,76,0.4));"></div>
+      </div>
+      <div class="chart-bar-label">${new Date(c.k).toLocaleDateString('en-GB', { day:'numeric', month:'short' })}</div>
+    </div>`).join('');
+}
+
+// ===== MEMBERS =====
+function renderReg() {
+  const tb = document.getElementById('regTbody');
+  const since = Date.now() - 30 * 86400000;
+  const rows = PROFILES.filter(p => new Date(p.created_at).getTime() > since);
+  setText('regSub', `${rows.length} sign-up${rows.length===1?'':'s'} in the last 30 days`);
+  tb.innerHTML = rows.length ? rows.map(p => `
+    <tr>
+      <td><strong>${esc(p.full_name || '—')}</strong></td>
+      <td style="font-family:var(--font-mono);font-size:11px;color:var(--muted);">${esc(p.email)}</td>
+      <td>${planBadge(p.requested_plan)}</td>
+      <td>${planBadge(p.plan)}</td>
+      <td>${esc(p.country || '—')}</td>
+      <td style="font-size:11px;color:var(--muted);">${ago(p.created_at)}</td>
+      <td>
+        ${p.requested_plan !== 'Free' && p.plan !== p.requested_plan ? `<button class="action-btn" onclick="setPlan('${p.id}','${p.requested_plan}')">✓ Grant ${esc(p.requested_plan)}</button>` : ''}
+        ${statusButton(p)}
+      </td>
+    </tr>`).join('') : '<tr><td colspan="7" style="color:var(--muted);">No sign-ups in the last 30 days.</td></tr>';
+}
+
+function statusButton(p) {
+  return p.status === 'suspended'
+    ? `<button class="action-btn" onclick="setStatus('${p.id}','active')">Reactivate</button>`
+    : `<button class="action-btn danger" onclick="confirmSuspend('${p.id}')">Suspend</button>`;
+}
+
+let userQuery = '', userPlan = '';
+function renderUsers() {
+  const tb = document.getElementById('usersTbody');
+  const q = userQuery.toLowerCase();
+  const rows = PROFILES.filter(p =>
+    (!userPlan || p.plan === userPlan) &&
+    (!q || [p.full_name, p.email, p.country].some(v => (v || '').toLowerCase().includes(q))));
+  tb.innerHTML = rows.length ? rows.map(p => `
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:30px;height:30px;border-radius:50%;background:var(--gold-dim);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--gold);flex-shrink:0;">${esc(initials(p.full_name || p.email))}</div>
+          <strong>${esc(p.full_name || '—')}</strong>
+        </div>
+      </td>
+      <td style="font-family:var(--font-mono);font-size:11px;color:var(--muted);">${esc(p.email)}</td>
+      <td>
+        <select class="form-select" style="padding:5px 10px;font-size:12px;" onchange="setPlan('${p.id}', this.value)">
+          ${['Free','Starter','Pro'].map(x => `<option${x===p.plan?' selected':''}>${x}</option>`).join('')}
+        </select>
+      </td>
+      <td>${esc(p.country || '—')}</td>
+      <td style="font-size:11px;color:var(--muted);">${fmtDate(p.created_at)}</td>
+      <td><span class="badge ${p.status==='suspended'?'badge-red':'badge-green'}">${esc(p.status)}</span></td>
+      <td>
+        <a class="action-btn" href="mailto:${encodeURIComponent(p.email)}" style="text-decoration:none;">Email</a>
+        ${statusButton(p)}
+      </td>
+    </tr>`).join('') : `<tr><td colspan="7" style="color:var(--muted);">${PROFILES.length ? 'No members match.' : 'No members yet. Sign-ups from the website appear here automatically.'}</td></tr>`;
+}
+function filterUsers(q) { userQuery = q; renderUsers(); }
+function filterUsersByPlan(p) { userPlan = p; renderUsers(); }
+
+async function setPlan(id, plan) {
+  const { error } = await sb.from('profiles').update({ plan }).eq('id', id);
+  if (error) return fail(error, 'Could not change plan.');
+  showToast('✓', `Plan changed to ${plan}.`);
+  await loadAll();
+}
+async function setStatus(id, status) {
+  const { error } = await sb.from('profiles').update({ status }).eq('id', id);
+  if (error) return fail(error, 'Could not update member.');
+  showToast('✓', status === 'suspended' ? 'Member suspended.' : 'Member reactivated.');
+  await loadAll();
+}
+function confirmSuspend(id) {
+  const p = PROFILES.find(x => x.id === id);
+  if (id === ME.id) { showToast('⚠️', "You can't suspend your own account."); return; }
+  openModal('Suspend member?', `${esc(p.full_name || p.email)} will be signed out of members-only content until you reactivate them.`, () => setStatus(id, 'suspended'));
+}
+
+// ===== LISTINGS =====
+function sponsorBadge(s) {
+  if (!s) return '<span class="badge badge-dim">—</span>';
+  return `<span class="badge ${s==='Visa Sponsor'?'badge-blue':s==='Relocation Support'?'badge-green':'badge-gold'}">${esc(s)}</span>`;
+}
+function langBadge(l) {
+  if (!l) return '<span class="badge badge-dim">—</span>';
+  return `<span class="badge ${l==='Arabic Required'?'badge-red':l==='Bilingual Preferred'?'badge-amber':'badge-green'}">${esc(l)}</span>`;
+}
+function statusBadge(s) {
+  const c = { active:'badge-green', inactive:'badge-dim', pending:'badge-amber', rejected:'badge-red' }[s] || 'badge-dim';
+  return `<span class="badge ${c}">${esc(s)}</span>`;
+}
+function sourceBadge(l) {
+  if (l.source === 'agent') return '<span class="badge badge-blue" title="Found by the job agent">🤖 agent</span>';
+  if (l.source === 'sample') return '<span class="badge badge-dim" title="Original prototype sample">sample</span>';
+  return '';
+}
+function listingActions(l) {
+  return `
+    <button class="action-btn" onclick="openListingModal('${l.market}', ${l.id})">Edit</button>
+    ${l.status === 'active'
+      ? `<button class="action-btn" onclick="setListingStatus(${l.id},'inactive')">Deactivate</button>`
+      : `<button class="action-btn" onclick="setListingStatus(${l.id},'active')">Activate</button>`}
+    <button class="action-btn danger" onclick="confirmRemove(${l.id})">Remove</button>`;
+}
+function managedListings(market) {
+  return LISTINGS.filter(l => l.market === market && (l.status === 'active' || l.status === 'inactive'));
+}
+
+function renderJobs() {
+  const rows = managedListings('global');
+  document.getElementById('jobsAdminTbody').innerHTML = rows.length ? rows.map(j => `
+    <tr>
+      <td><strong>${esc(j.title)}</strong> ${sourceBadge(j)}</td>
+      <td>${esc(j.company)}</td>
+      <td>${esc(j.flag)} ${esc(j.country)}</td>
+      <td style="font-family:var(--font-mono);font-size:11px;">${esc(j.salary || '—')}</td>
+      <td>${sponsorBadge(j.sponsorship)}</td>
+      <td><span class="badge badge-dim">${esc(j.industry || '—')}</span></td>
+      <td>${j.members_only ? '<span class="badge badge-gold">Members</span>' : '<span class="badge badge-dim">Public</span>'}</td>
+      <td>${statusBadge(j.status)}</td>
+      <td>${listingActions(j)}</td>
+    </tr>`).join('') : '<tr><td colspan="9" style="color:var(--muted);">No job listings yet. Add one, or approve some from Pending Review.</td></tr>';
+}
+
+function renderGCC() {
+  const rows = managedListings('gcc');
+  document.getElementById('gccAdminTbody').innerHTML = rows.length ? rows.map(j => `
+    <tr>
+      <td><strong>${esc(j.title)}</strong> ${sourceBadge(j)}</td>
+      <td>${esc(j.company)}</td>
+      <td>${esc(j.flag)} ${esc(j.country)}</td>
+      <td style="color:var(--gold);font-family:var(--font-mono);font-size:11px;">${esc(j.salary || '—')}</td>
+      <td>${langBadge(j.language)}</td>
+      <td>${j.members_only ? '<span class="badge badge-gold">Members</span>' : '<span class="badge badge-dim">Public</span>'}</td>
+      <td>${statusBadge(j.status)}</td>
+      <td>${listingActions(j)}</td>
+    </tr>`).join('') : '<tr><td colspan="8" style="color:var(--muted);">No GCC listings yet.</td></tr>';
+}
+
+function renderReview() {
+  const rows = LISTINGS.filter(l => l.status === 'pending');
+  setText('reviewSub', rows.length
+    ? `${rows.length} listing${rows.length===1?'':'s'} waiting. Approve to publish, or reject to hide them.`
+    : 'Nothing waiting. New listings from the job agent will appear here.');
+  document.getElementById('approveAllBtn').style.display = rows.length ? '' : 'none';
+  document.getElementById('reviewTbody').innerHTML = rows.length ? rows.map(l => {
+    const url = safeUrl(l.source_url);
+    return `
+    <tr>
+      <td><span class="badge ${l.market==='gcc'?'badge-gold':'badge-blue'}">${l.market==='gcc'?'GCC':'Global'}</span></td>
+      <td><strong>${esc(l.title)}</strong>${l.notes ? `<div style="font-size:11px;color:var(--muted);margin-top:4px;max-width:340px;">${esc(l.notes)}</div>` : ''}</td>
+      <td>${esc(l.company)}</td>
+      <td>${esc(l.flag)} ${esc(l.country)}</td>
+      <td style="font-family:var(--font-mono);font-size:11px;">${esc(l.salary || '—')}</td>
+      <td>${url ? `<a href="${esc(url)}" target="_blank" rel="noopener" style="color:var(--gold);font-size:12px;">Open source ↗</a>` : '<span style="color:var(--muted);font-size:12px;">No link</span>'}</td>
+      <td style="font-size:11px;color:var(--muted);">${ago(l.found_at || l.created_at)}</td>
+      <td>
+        <button class="action-btn" onclick="setListingStatus(${l.id},'active')">✓ Approve</button>
+        <button class="action-btn" onclick="openListingModal('${l.market}', ${l.id})">Edit</button>
+        <button class="action-btn danger" onclick="setListingStatus(${l.id},'rejected')">✕ Reject</button>
+      </td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="8" style="color:var(--muted);">No listings waiting for review.</td></tr>';
+}
+
+async function setListingStatus(id, status) {
+  const { error } = await sb.from('listings').update({ status, reviewed_at: new Date().toISOString() }).eq('id', id);
+  if (error) return fail(error, 'Could not update listing.');
+  const msg = { active:'Listing is now live on the site.', inactive:'Listing hidden from the site.', rejected:'Listing rejected.' }[status];
+  showToast('✓', msg);
+  await loadAll();
+}
+
+async function approveAllPending() {
+  const ids = LISTINGS.filter(l => l.status === 'pending').map(l => l.id);
+  openModal(`Approve ${ids.length} listings?`, 'They will all go live on the public site straight away.', async () => {
+    const { error } = await sb.from('listings').update({ status: 'active', reviewed_at: new Date().toISOString() }).in('id', ids);
+    if (error) return fail(error, 'Could not approve listings.');
+    showToast('✓', `${ids.length} listings approved.`);
+    await loadAll();
+  });
+}
+
+function confirmRemove(id) {
+  const l = LISTINGS.find(x => x.id === id);
+  openModal('Remove listing?', `"${esc(l.title)}" at ${esc(l.company)} will be permanently deleted. To hide it temporarily, use Deactivate instead.`, async () => {
+    const { error } = await sb.from('listings').delete().eq('id', id);
+    if (error) return fail(error, 'Could not remove listing.');
+    showToast('🗑️', 'Listing removed.');
+    await loadAll();
+  });
+}
+
+function opt(values, current) {
+  return values.map(v => `<option${v === current ? ' selected' : ''}>${esc(v)}</option>`).join('');
+}
+
+function openListingModal(market, id) {
+  const l = id ? LISTINGS.find(x => x.id === id) : { market, members_only: false, status: 'active' };
+  const gcc = market === 'gcc';
+  const title = (id ? 'Edit ' : '+ Add ') + (gcc ? 'GCC Listing' : 'Job Listing');
+  const body = `
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Job Title *</label><input class="form-input" id="f_title" value="${esc(l.title)}" placeholder="e.g. Data Engineer"></div>
+      <div class="form-group"><label class="form-label">Company *</label><input class="form-input" id="f_company" value="${esc(l.company)}" placeholder="Company name"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Country *</label>
+        ${gcc
+          ? `<select class="form-select" id="f_country">${opt(['UAE','Saudi Arabia','Qatar','Kuwait','Oman','Bahrain'], l.country)}</select>`
+          : `<input class="form-input" id="f_country" value="${esc(l.country)}" placeholder="e.g. Germany" list="countryList"><datalist id="countryList">${Object.keys(FLAGS).map(c => `<option value="${esc(c)}">`).join('')}</datalist>`}
+      </div>
+      <div class="form-group"><label class="form-label">${gcc ? 'Base Salary' : 'Salary Range'}</label><input class="form-input" id="f_salary" value="${esc(l.salary)}" placeholder="${gcc ? 'e.g. AED 40,000/mo' : 'e.g. €60,000 – €80,000'}"></div>
+    </div>
+    ${gcc ? `
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Housing Allowance</label><input class="form-input" id="f_housing" value="${esc(l.housing)}" placeholder="e.g. AED 12,000/mo"></div>
+      <div class="form-group"><label class="form-label">Flight Allowance</label><input class="form-input" id="f_flights" value="${esc(l.flights)}" placeholder="e.g. Annual return"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Language Requirement</label><select class="form-select" id="f_language">${opt(['English Only','Bilingual Preferred','Arabic Required'], l.language)}</select></div>
+      <div class="form-group"><label class="form-label">Industry</label><input class="form-input" id="f_industry" value="${esc(l.industry)}" placeholder="e.g. Oil & Gas"></div>
+    </div>` : `
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Sponsorship Type</label><select class="form-select" id="f_sponsorship">${opt(['Visa Sponsor','Relocation Support','Both'], l.sponsorship)}</select></div>
+      <div class="form-group"><label class="form-label">Industry</label><input class="form-input" id="f_industry" value="${esc(l.industry)}" placeholder="e.g. Tech" list="industryList"><datalist id="industryList">${['Tech','Finance','Engineering','Healthcare','Hospitality','Operations','Education','Other'].map(i => `<option value="${i}">`).join('')}</datalist></div>
+    </div>`}
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Access Level</label><select class="form-select" id="f_access"><option value="public"${!l.members_only?' selected':''}>Public</option><option value="members"${l.members_only?' selected':''}>Members Only</option></select></div>
+      <div class="form-group"><label class="form-label">Status</label><select class="form-select" id="f_status">${opt(['active','inactive','pending'], l.status === 'rejected' ? 'inactive' : l.status)}</select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Apply / Source Link</label><input class="form-input" id="f_url" value="${esc(l.source_url)}" placeholder="https://… (shown to visitors as View & Apply)"></div>
+    <div class="form-group"><label class="form-label">Internal Notes</label><input class="form-input" id="f_notes" value="${esc(l.notes)}" placeholder="Only visible to admins"></div>
+    <div class="login-error" id="f_error" style="display:none;"></div>`;
+  openModal(title, null, () => saveListing(market, id), body, id ? 'Save Changes' : 'Add Listing');
+}
+
+async function saveListing(market, id) {
+  const v = k => { const el = document.getElementById('f_' + k); return el ? el.value.trim() : ''; };
+  const err = msg => { const e = document.getElementById('f_error'); e.textContent = msg; e.style.display = 'block'; return false; };
+  if (!v('title') || !v('company') || !v('country')) return err('Title, company and country are required.');
+  const url = v('url');
+  if (url && !safeUrl(url)) return err('The link must start with https:// or http://');
+  const row = {
+    market,
+    title: v('title'), company: v('company'), country: v('country'),
+    flag: FLAGS[v('country')] || '🌐',
+    salary: v('salary') || null,
+    industry: v('industry') || null,
+    members_only: v('access') === 'members',
+    status: v('status'),
+    source_url: url || null,
+    notes: v('notes') || null,
+  };
+  if (market === 'gcc') {
+    row.housing = v('housing') || null; row.flights = v('flights') || null; row.language = v('language') || null;
+  } else {
+    row.sponsorship = v('sponsorship') || null;
+  }
+  const res = id
+    ? await sb.from('listings').update({ ...row, reviewed_at: new Date().toISOString() }).eq('id', id)
+    : await sb.from('listings').insert({ ...row, source: 'admin' });
+  if (res.error) {
+    if (/duplicate key/.test(res.error.message)) return err('Another listing already uses this link.');
+    return err(res.error.message);
+  }
+  showToast('✓', id ? 'Listing updated.' : 'Listing added.');
+  await loadAll();
+  return true;
+}
+
+function exportCSV(market) {
+  const rows = LISTINGS.filter(l => l.market === market);
+  const cols = ['id','status','title','company','country','salary','housing','flights','sponsorship','language','industry','members_only','source','source_url','created_at'];
+  const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const csv = [cols.join(','), ...rows.map(r => cols.map(c => q(r[c])).join(','))].join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = `globalhound-${market}-listings.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// ===== COUNTRIES (static for now) =====
 const COUNTRIES = [
   { flag:'🇦🇪', name:'UAE', visa:8, safety:8, business:9, tax:'Low' },
   { flag:'🇩🇪', name:'Germany', visa:7, safety:9, business:8, tax:'High' },
@@ -1314,168 +1640,19 @@ const COUNTRIES = [
   { flag:'🇳🇿', name:'New Zealand', visa:7, safety:9, business:7, tax:'Medium' },
   { flag:'🇯🇵', name:'Japan', visa:5, safety:10, business:7, tax:'Medium' },
 ];
-
-// ===== RENDER TABLES =====
-function renderReg() {
-  const tb = document.getElementById('regTbody');
-  if (!tb) return;
-  tb.innerHTML = NEW_REGS.map(u => `
-    <tr>
-      <td><strong>${u.name}</strong></td>
-      <td style="font-family:var(--font-mono);font-size:11px;color:var(--muted);">${u.email}</td>
-      <td><span class="badge ${u.plan==='Pro'?'badge-gold':u.plan==='Starter'?'badge-blue':'badge-dim'}">${u.plan}</span></td>
-      <td>${u.country}</td>
-      <td style="font-size:11px;color:var(--muted);">${u.time}</td>
-      <td><span class="badge ${u.status==='approved'?'badge-green':'badge-amber'}">${u.status}</span></td>
-      <td>
-        <button class="action-btn" onclick="approveUser('${u.name}')">✓ Approve</button>
-        <button class="action-btn danger" onclick="showToast('🚫','${u.name} rejected.')">✕ Reject</button>
-      </td>
-    </tr>
-  `).join('');
-}
-
-function approveUser(name) {
-  const rows = document.querySelectorAll('#regTbody tr');
-  rows.forEach(r => { if(r.innerHTML.includes(name)) { const badges = r.querySelectorAll('.badge'); badges.forEach(b => { if(b.textContent === 'pending') { b.className = 'badge badge-green'; b.textContent = 'approved'; } }); } });
-  showToast('✓', `${name} approved and granted access.`);
-}
-
-function renderUsers() {
-  const tb = document.getElementById('usersTbody');
-  if (!tb) return;
-  tb.innerHTML = USERS.map(u => `
-    <tr>
-      <td>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div style="width:30px;height:30px;border-radius:50%;background:var(--gold-dim);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--gold);flex-shrink:0;">${u.name.split(' ').map(n=>n[0]).join('')}</div>
-          <strong>${u.name}</strong>
-        </div>
-      </td>
-      <td style="font-family:var(--font-mono);font-size:11px;color:var(--muted);">${u.email}</td>
-      <td><span class="badge ${u.plan==='Pro'?'badge-gold':u.plan==='Starter'?'badge-blue':'badge-dim'}">${u.plan}</span></td>
-      <td>${u.country}</td>
-      <td style="font-size:11px;color:var(--muted);">${u.joined}</td>
-      <td style="font-size:11px;color:var(--muted);">${u.activity}</td>
-      <td>
-        <button class="action-btn" onclick="showToast('👤','Viewing ${u.name}...')">View</button>
-        <button class="action-btn" onclick="showToast('✉️','Email sent to ${u.name}')">Email</button>
-        <button class="action-btn danger" onclick="showToast('🚫','${u.name} suspended.')">Suspend</button>
-      </td>
-    </tr>
-  `).join('');
-}
-
-function filterUsers(q) {
-  const rows = document.querySelectorAll('#usersTbody tr');
-  rows.forEach(r => { r.style.display = r.innerText.toLowerCase().includes(q.toLowerCase()) ? '' : 'none'; });
-}
-
-function filterUsersByPlan(plan) {
-  const rows = document.querySelectorAll('#usersTbody tr');
-  rows.forEach(r => { r.style.display = (!plan || r.innerText.includes(plan)) ? '' : 'none'; });
-}
-
-function renderJobs() {
-  const tb = document.getElementById('jobsAdminTbody');
-  if (!tb) return;
-  tb.innerHTML = JOBS.map((j,i) => `
-    <tr>
-      <td><strong>${j.title}</strong></td>
-      <td>${j.company}</td>
-      <td>${j.country}</td>
-      <td style="font-family:var(--font-mono);font-size:11px;">${j.salary}</td>
-      <td><span class="badge ${j.sponsorship==='Visa Sponsor'?'badge-blue':j.sponsorship==='Relocation Support'?'badge-green':'badge-gold'}">${j.sponsorship}</span></td>
-      <td><span class="badge badge-dim">${j.industry}</span></td>
-      <td><span class="badge ${j.active?'badge-green':'badge-red'}">${j.active?'Active':'Inactive'}</span></td>
-      <td>
-        <button class="action-btn" onclick="showToast('✏️','Edit listing ${i+1}...')">Edit</button>
-        <button class="action-btn" onclick="toggleJobStatus(${i})">${j.active?'Deactivate':'Activate'}</button>
-        <button class="action-btn danger" onclick="showToast('🗑️','Listing removed.')">Remove</button>
-      </td>
-    </tr>
-  `).join('');
-}
-
-function toggleJobStatus(i) {
-  JOBS[i].active = !JOBS[i].active;
-  renderJobs();
-  showToast('✓', `Listing ${JOBS[i].active ? 'activated':'deactivated'}.`);
-}
-
-function renderGCC() {
-  const tb = document.getElementById('gccAdminTbody');
-  if (!tb) return;
-  tb.innerHTML = GCC.map(j => `
-    <tr>
-      <td><strong>${j.title}</strong></td>
-      <td>${j.company}</td>
-      <td>${j.country}</td>
-      <td style="color:var(--gold);font-family:var(--font-mono);font-size:11px;">${j.base}</td>
-      <td><span class="badge ${j.lang==='Arabic Required'?'badge-red':j.lang==='Bilingual'?'badge-amber':'badge-green'}">${j.lang}</span></td>
-      <td><span class="badge badge-gold">Pro Only</span></td>
-      <td>
-        <button class="action-btn" onclick="showToast('✏️','Editing GCC listing...')">Edit</button>
-        <button class="action-btn danger" onclick="showToast('🗑️','GCC listing removed.')">Remove</button>
-      </td>
-    </tr>
-  `).join('');
-}
-
 function renderCountries() {
   const tb = document.getElementById('countriesAdminTbody');
   if (!tb) return;
+  const slider = (v, color) => `<div style="display:flex;align-items:center;gap:8px;"><input type="range" min="1" max="10" value="${v}" style="width:70px;accent-color:var(--${color});" disabled><span style="font-family:var(--font-mono);font-size:11px;color:var(--${color});width:20px;">${v}</span></div>`;
   tb.innerHTML = COUNTRIES.map(c => `
     <tr>
       <td><strong>${c.flag} ${c.name}</strong></td>
-      <td>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <input type="range" min="1" max="10" value="${c.visa}" style="width:70px;accent-color:var(--gold);" oninput="this.nextElementSibling.textContent=this.value">
-          <span style="font-family:var(--font-mono);font-size:11px;color:var(--gold);width:20px;">${c.visa}</span>
-        </div>
-      </td>
-      <td>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <input type="range" min="1" max="10" value="${c.safety}" style="width:70px;accent-color:var(--green);" oninput="this.nextElementSibling.textContent=this.value">
-          <span style="font-family:var(--font-mono);font-size:11px;color:var(--green);width:20px;">${c.safety}</span>
-        </div>
-      </td>
-      <td>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <input type="range" min="1" max="10" value="${c.business}" style="width:70px;accent-color:var(--blue);" oninput="this.nextElementSibling.textContent=this.value">
-          <span style="font-family:var(--font-mono);font-size:11px;color:var(--blue);width:20px;">${c.business}</span>
-        </div>
-      </td>
-      <td>
-        <select class="form-select" style="padding:5px 10px;font-size:12px;">
-          <option ${c.tax==='Low'?'selected':''}>Low</option>
-          <option ${c.tax==='Medium'?'selected':''}>Medium</option>
-          <option ${c.tax==='High'?'selected':''}>High</option>
-        </select>
-      </td>
-      <td>
-        <button class="action-btn" onclick="showToast('✓','${c.name} updated!')">Save</button>
-      </td>
-    </tr>
-  `).join('');
-}
-
-// ===== CHART =====
-function buildSignupChart() {
-  const el = document.getElementById('signupChart');
-  if (!el) return;
-  const data = [8, 14, 11, 18, 22, 19, 27, 34];
-  const labels = ['Feb 10','Feb 17','Feb 24','Mar 3','Mar 10','Mar 17','Mar 24','Mar 31'];
-  const max = Math.max(...data);
-  el.innerHTML = data.map((v,i) => `
-    <div class="chart-bar-col">
-      <div class="chart-bar-outer">
-        <div class="chart-bar-fill" data-val="${v}"
-          style="height:${(v/max)*100}%;background:linear-gradient(180deg,var(--gold),rgba(201,168,76,0.4));"></div>
-      </div>
-      <div class="chart-bar-label">${labels[i].split(' ')[1]}</div>
-    </div>
-  `).join('');
+      <td>${slider(c.visa, 'gold')}</td>
+      <td>${slider(c.safety, 'green')}</td>
+      <td>${slider(c.business, 'blue')}</td>
+      <td>${c.tax}</td>
+      <td><span class="badge badge-dim">Coming soon</span></td>
+    </tr>`).join('');
 }
 
 // ===== NAVIGATION =====
@@ -1485,61 +1662,27 @@ function showPage(page, el) {
   const target = document.getElementById('page-' + page);
   if (target) target.classList.add('active');
   if (el) el.classList.add('active');
-  const titles = { overview:'Dashboard Overview', analytics:'Analytics', users:'All Members', registrations:'New Registrations', subscriptions:'Subscriptions & Revenue', jobs:'Job Listings Manager', gcc:'GCC Listings Manager', countries:'Country Intelligence', weekly:'Weekly Intelligence Drop', settings:'Settings', referrals:'Referral Programme' };
+  const titles = { overview:'Dashboard Overview', analytics:'Analytics', users:'All Members', registrations:'New Registrations', subscriptions:'Subscriptions & Revenue', jobs:'Job Listings Manager', gcc:'GCC Listings Manager', review:'Pending Review', countries:'Country Intelligence', weekly:'Weekly Intelligence Drop', settings:'Settings', referrals:'Referral Programme' };
   document.getElementById('topbarTitle').textContent = titles[page] || 'Admin';
 }
 
 // ===== MODALS =====
-function openModal(title, body, onConfirm) {
+// body: plain text (escaped by caller) or bodyHtml for forms. onConfirm may return false to keep the modal open.
+function openModal(title, body, onConfirm, bodyHtml, confirmLabel) {
   document.getElementById('modalTitle').textContent = title;
-  document.getElementById('modalBody').innerHTML = `<p style="font-size:14px;color:var(--muted);line-height:1.7;">${body}</p>`;
-  document.getElementById('modalConfirm').onclick = () => { onConfirm(); closeModal(); };
+  document.getElementById('modalBody').innerHTML = bodyHtml || `<p style="font-size:14px;color:var(--muted);line-height:1.7;">${body}</p>`;
+  const btn = document.getElementById('modalConfirm');
+  btn.textContent = confirmLabel || 'Confirm';
+  btn.disabled = false;
+  btn.onclick = async () => {
+    btn.disabled = true;
+    const ok = await onConfirm();
+    btn.disabled = false;
+    if (ok !== false) closeModal();
+  };
   document.getElementById('modalOverlay').classList.add('open');
 }
-
 function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
-
-function openAddJobModal() {
-  document.getElementById('modalTitle').textContent = '+ Add New Job Listing';
-  document.getElementById('modalBody').innerHTML = `
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Job Title</label><input class="form-input" placeholder="e.g. Data Engineer"></div>
-      <div class="form-group"><label class="form-label">Company</label><input class="form-input" placeholder="Company name"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Country</label><input class="form-input" placeholder="e.g. Germany"></div>
-      <div class="form-group"><label class="form-label">Salary Range</label><input class="form-input" placeholder="e.g. €60k–€80k"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Sponsorship Type</label><select class="form-select"><option>Visa Sponsor</option><option>Relocation Support</option><option>Both</option></select></div>
-      <div class="form-group"><label class="form-label">Industry</label><select class="form-select"><option>Tech</option><option>Finance</option><option>Engineering</option><option>Healthcare</option><option>Other</option></select></div>
-    </div>
-    <div class="form-group"><label class="form-label">Access Level</label><select class="form-select"><option>Public</option><option>Members Only</option></select></div>
-  `;
-  document.getElementById('modalConfirm').onclick = () => { showToast('✓', 'New job listing added!'); closeModal(); };
-  document.getElementById('modalOverlay').classList.add('open');
-}
-
-function openAddGCCModal() {
-  document.getElementById('modalTitle').textContent = '+ Add GCC Listing';
-  document.getElementById('modalBody').innerHTML = `
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Job Title</label><input class="form-input" placeholder="e.g. Finance Director"></div>
-      <div class="form-group"><label class="form-label">Company</label><input class="form-input" placeholder="Company name"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Country</label><select class="form-select"><option>UAE</option><option>Saudi Arabia</option><option>Qatar</option><option>Kuwait</option><option>Oman</option></select></div>
-      <div class="form-group"><label class="form-label">Base Salary</label><input class="form-input" placeholder="e.g. AED 40,000/mo"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Housing Allowance</label><input class="form-input" placeholder="e.g. AED 12,000/mo"></div>
-      <div class="form-group"><label class="form-label">Flight Allowance</label><input class="form-input" placeholder="e.g. Annual return"></div>
-    </div>
-    <div class="form-group"><label class="form-label">Language Requirement</label><select class="form-select"><option>English Only</option><option>Bilingual Preferred</option><option>Arabic Required</option></select></div>
-  `;
-  document.getElementById('modalConfirm').onclick = () => { showToast('✓', 'GCC listing added!'); closeModal(); };
-  document.getElementById('modalOverlay').classList.add('open');
-}
 
 // ===== TOAST =====
 function showToast(icon, msg) {
@@ -1548,28 +1691,32 @@ function showToast(icon, msg) {
   document.getElementById('toastMsg').textContent = msg;
   t.classList.add('show');
   clearTimeout(window._tt);
-  window._tt = setTimeout(() => t.classList.remove('show'), 3200);
+  window._tt = setTimeout(() => t.classList.remove('show'), 3500);
 }
 
 // ===== CLOCK =====
 function updateClock() {
   const el = document.getElementById('topbarClock');
-  if (!el) return;
-  const now = new Date();
-  el.textContent = now.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  if (el) el.textContent = new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
 }
 
 // ===== INIT =====
-function initDashboard() {
-  buildSignupChart();
-  renderReg();
-  renderUsers();
-  renderJobs();
-  renderGCC();
+async function initDashboard() {
+  setText('adminName', ME.email);
+  setText('adminAvatar', initials(ME.email));
+  setText('settingsEmail', ME.email);
   renderCountries();
-  setInterval(updateClock, 1000);
+  clearInterval(clockTimer);
+  clockTimer = setInterval(updateClock, 1000);
   updateClock();
+  await loadAll();
 }
+
+window.addEventListener('DOMContentLoaded', async () => {
+  document.getElementById('adminPass').addEventListener('keydown', e => { if (e.key === 'Enter') adminLogin(); });
+  const { data } = await sb.auth.getSession();
+  if (data.session) await enterIfAdmin(data.session.user, true);
+});
 </script>
 </body>
 </html>
