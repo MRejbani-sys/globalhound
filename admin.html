@@ -767,8 +767,8 @@ tr:hover td { background: rgba(255,255,255,0.02); }
           <div class="card">
             <div class="card-header"><div class="card-title">📋 Active Subscriptions</div></div>
             <div class="card-body">
-              <div class="metric-row"><span class="metric-key">Pro Plan (149 × $79)</span><span class="metric-val" style="color:var(--gold);">$11,771/mo</span></div>
-              <div class="metric-row"><span class="metric-key">Starter Plan (78 × $29)</span><span class="metric-val">$2,262/mo</span></div>
+              <div class="metric-row"><span class="metric-key">Pro Plan (149 × $9.99)</span><span class="metric-val" style="color:var(--gold);">$1,489/mo</span></div>
+              <div class="metric-row"><span class="metric-key">Starter Plan (78 × $5.99)</span><span class="metric-val">$467/mo</span></div>
               <div class="metric-row"><span class="metric-key">Free Trials (20)</span><span class="metric-val" style="color:var(--muted);">$0/mo</span></div>
               <div class="metric-row"><span class="metric-key">Stripe Processing Fees (~2.9%)</span><span class="metric-val" style="color:var(--red);">−$285/mo</span></div>
               <div class="metric-row" style="border-top:1px solid var(--border2); padding-top:12px; margin-top:4px;"><span class="metric-key" style="color:var(--white);font-weight:600;">Net MRR</span><span class="metric-val" style="color:var(--green);font-size:16px;">$13,748/mo</span></div>
@@ -846,7 +846,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
         <div class="card">
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Market</th><th>Job Title</th><th>Company</th><th>Country</th><th>Salary</th><th>Source</th><th>Found</th><th>Actions</th></tr></thead>
+              <thead><tr><th>Market</th><th>Job Title</th><th>Company</th><th>Country</th><th>Salary</th><th>Source</th><th>Dates</th><th>Actions</th></tr></thead>
               <tbody id="reviewTbody"></tbody>
             </table>
           </div>
@@ -1088,11 +1088,11 @@ tr:hover td { background: rgba(255,255,255,0.02); }
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label">Starter Plan Price ($/mo)</label>
-                <input class="form-input" value="29" type="number">
+                <input class="form-input" value="5.99" type="number" step="0.01">
               </div>
               <div class="form-group">
                 <label class="form-label">Pro Plan Price ($/mo)</label>
-                <input class="form-input" value="79" type="number">
+                <input class="form-input" value="9.99" type="number" step="0.01">
               </div>
               <div class="form-group">
                 <label class="form-label">Referral Credit Per Signup ($)</label>
@@ -1479,7 +1479,7 @@ function renderJobs() {
       <td style="font-family:var(--font-mono);font-size:11px;">${esc(j.salary || '—')}</td>
       <td>${sponsorBadge(j.sponsorship)}</td>
       <td><span class="badge badge-dim">${esc(j.industry || '—')}</span></td>
-      <td>${j.members_only ? '<span class="badge badge-gold">Members</span>' : '<span class="badge badge-dim">Public</span>'}</td>
+      <td>${j.members_only ? '<span class="badge badge-blue">Starter+</span>' : '<span class="badge badge-dim">Free</span>'}</td>
       <td>${statusBadge(j.status)}</td>
       <td>${listingActions(j)}</td>
     </tr>`).join('') : '<tr><td colspan="9" style="color:var(--muted);">No job listings yet. Add one, or approve some from Pending Review.</td></tr>';
@@ -1494,7 +1494,7 @@ function renderGCC() {
       <td>${esc(j.flag)} ${esc(j.country)}</td>
       <td style="color:var(--gold);font-family:var(--font-mono);font-size:11px;">${esc(j.salary || '—')}</td>
       <td>${langBadge(j.language)}</td>
-      <td>${j.members_only ? '<span class="badge badge-gold">Members</span>' : '<span class="badge badge-dim">Public</span>'}</td>
+      <td><span class="badge badge-gold">Pro package</span></td>
       <td>${statusBadge(j.status)}</td>
       <td>${listingActions(j)}</td>
     </tr>`).join('') : '<tr><td colspan="8" style="color:var(--muted);">No GCC listings yet.</td></tr>';
@@ -1511,12 +1511,14 @@ function renderReview() {
     return `
     <tr>
       <td><span class="badge ${l.market==='gcc'?'badge-gold':'badge-blue'}">${l.market==='gcc'?'GCC':'Global'}</span></td>
-      <td><strong>${esc(l.title)}</strong>${l.notes ? `<div style="font-size:11px;color:var(--muted);margin-top:4px;max-width:340px;">${esc(l.notes)}</div>` : ''}</td>
+      <td><strong>${esc(l.title)}</strong>${l.members_only ? ' <span class="badge badge-blue">Starter+</span>' : ''}
+        ${l.description ? `<div style="font-size:11px;color:var(--muted);margin-top:4px;max-width:360px;">${esc(l.description.slice(0, 180))}${l.description.length > 180 ? '…' : ''}</div>` : ''}
+        ${l.notes ? `<div style="font-size:11px;color:var(--amber);margin-top:4px;max-width:360px;">Note: ${esc(l.notes)}</div>` : ''}</td>
       <td>${esc(l.company)}</td>
       <td>${esc(l.flag)} ${esc(l.country)}</td>
       <td style="font-family:var(--font-mono);font-size:11px;">${esc(l.salary || '—')}</td>
       <td>${url ? `<a href="${esc(url)}" target="_blank" rel="noopener" style="color:var(--gold);font-size:12px;">Open source ↗</a>` : '<span style="color:var(--muted);font-size:12px;">No link</span>'}</td>
-      <td style="font-size:11px;color:var(--muted);">${ago(l.found_at || l.created_at)}</td>
+      <td style="font-size:11px;color:var(--muted);">${l.posted_at ? 'Posted ' + fmtDate(l.posted_at) + '<br>' : ''}Found ${ago(l.found_at || l.created_at)}</td>
       <td>
         <button class="action-btn" onclick="setListingStatus(${l.id},'active')">✓ Approve</button>
         <button class="action-btn" onclick="openListingModal('${l.market}', ${l.id})">Edit</button>
@@ -1589,16 +1591,26 @@ function openListingModal(market, id) {
       <div class="form-group"><label class="form-label">Industry</label><input class="form-input" id="f_industry" value="${esc(l.industry)}" placeholder="e.g. Tech" list="industryList"><datalist id="industryList">${['Tech','Finance','Engineering','Healthcare','Hospitality','Operations','Education','Other'].map(i => `<option value="${i}">`).join('')}</datalist></div>
     </div>`}
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Access Level</label><select class="form-select" id="f_access"><option value="public"${!l.members_only?' selected':''}>Public</option><option value="members"${l.members_only?' selected':''}>Members Only</option></select></div>
+      ${gcc
+        ? `<div class="form-group"><label class="form-label">Access</label><input class="form-input" value="Role visible to all · package & apply link Pro only" readonly style="opacity:0.6;"></div>`
+        : `<div class="form-group"><label class="form-label">Access Level</label><select class="form-select" id="f_access"><option value="public"${!l.members_only?' selected':''}>Public (Free)</option><option value="members"${l.members_only?' selected':''}>Members Only (Starter+)</option></select></div>`}
       <div class="form-group"><label class="form-label">Status</label><select class="form-select" id="f_status">${opt(['active','inactive','pending'], l.status === 'rejected' ? 'inactive' : l.status)}</select></div>
     </div>
-    <div class="form-group"><label class="form-label">Apply / Source Link</label><input class="form-input" id="f_url" value="${esc(l.source_url)}" placeholder="https://… (shown to visitors as View & Apply)"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Employment Type</label><input class="form-input" id="f_employment_type" value="${esc(l.employment_type)}" placeholder="e.g. Full-time" list="empList"><datalist id="empList"><option value="Full-time"><option value="Part-time"><option value="Contract"><option value="Remote"></datalist></div>
+      <div class="form-group"><label class="form-label">Date Posted</label><input class="form-input" type="date" id="f_posted_at" value="${esc(l.posted_at)}"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea form-input" id="f_description" placeholder="What the role involves">${esc(l.description)}</textarea></div>
+    <div class="form-group"><label class="form-label">Requirements</label><textarea class="form-textarea form-input" id="f_requirements" placeholder="Experience, qualifications, languages">${esc(l.requirements)}</textarea></div>
+    <div class="form-group"><label class="form-label">Visa &amp; Relocation Notes</label><textarea class="form-textarea form-input" id="f_visa_notes" placeholder="Sponsorship, relocation package, visa route">${esc(l.visa_notes)}</textarea></div>
+    <div class="form-group"><label class="form-label">Apply Link (employer\'s posting)</label><input class="form-input" id="f_url" value="${esc(l.source_url)}" placeholder="https://… (the Apply button on the job page)"></div>
     <div class="form-group"><label class="form-label">Internal Notes</label><input class="form-input" id="f_notes" value="${esc(l.notes)}" placeholder="Only visible to admins"></div>
     <div class="login-error" id="f_error" style="display:none;"></div>`;
   openModal(title, null, () => saveListing(market, id), body, id ? 'Save Changes' : 'Add Listing');
 }
 
 async function saveListing(market, id) {
+  const l0 = id ? LISTINGS.find(x => x.id === id) : null;
   const v = k => { const el = document.getElementById('f_' + k); return el ? el.value.trim() : ''; };
   const err = msg => { const e = document.getElementById('f_error'); e.textContent = msg; e.style.display = 'block'; return false; };
   if (!v('title') || !v('company') || !v('country')) return err('Title, company and country are required.');
@@ -1610,10 +1622,15 @@ async function saveListing(market, id) {
     flag: FLAGS[v('country')] || '🌐',
     salary: v('salary') || null,
     industry: v('industry') || null,
-    members_only: v('access') === 'members',
+    members_only: market === 'gcc' ? (l0 ? l0.members_only : false) : v('access') === 'members',
     status: v('status'),
     source_url: url || null,
     notes: v('notes') || null,
+    employment_type: v('employment_type') || null,
+    posted_at: v('posted_at') || null,
+    description: v('description') || null,
+    requirements: v('requirements') || null,
+    visa_notes: v('visa_notes') || null,
   };
   if (market === 'gcc') {
     row.housing = v('housing') || null; row.flights = v('flights') || null; row.language = v('language') || null;

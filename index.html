@@ -508,6 +508,20 @@
     border-radius: var(--radius); padding: 26px;
     transition: var(--transition); position: relative;
   }
+  .detail-card { background: var(--bg-card); border: 1px solid var(--border-dim); border-radius: var(--radius); padding: 32px; }
+  .detail-meta { display: flex; flex-wrap: wrap; gap: 8px 18px; color: var(--text-muted); font-size: 14px; margin: 10px 0 18px; }
+  .detail-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 22px 0; }
+  .detail-fact { background: var(--bg-secondary); border: 1px solid var(--border-dim); border-radius: 10px; padding: 14px 16px; }
+  .detail-fact .k { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; }
+  .detail-fact .v { font-size: 15px; font-weight: 600; color: var(--gold); }
+  .detail-section { margin-top: 26px; }
+  .detail-section h3 { font-size: 15px; font-weight: 600; color: var(--gold); margin-bottom: 10px; }
+  .detail-section p { font-size: 14px; color: var(--text-muted); line-height: 1.75; white-space: pre-line; }
+  .upgrade-box { margin-top: 26px; padding: 22px; border-radius: 12px; border: 1px solid var(--border); background: var(--gold-dim); }
+  .upgrade-box h3 { font-size: 16px; margin-bottom: 6px; }
+  .upgrade-box p { font-size: 14px; color: var(--text-muted); margin-bottom: 14px; }
+  .pkg-locked { filter: blur(5px); user-select: none; }
+  @media (max-width: 600px) { .detail-card { padding: 22px 18px; } }
   .gcc-card:hover { border-color: var(--border); background: var(--bg-card-hover); }
 
   .gcc-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
@@ -899,7 +913,7 @@
         <div class="step">
           <div class="step-num">02</div>
           <h3>Choose Your Membership Plan</h3>
-          <p>Starter at $29/mo or Pro at $79/mo. Unlock full listings, country reports, GCC private market, and weekly intelligence drops.</p>
+          <p>Starter at $5.99/mo or Pro at $9.99/mo. Unlock members-only listings, full country reports, GCC packages, and the weekly intelligence drop.</p>
         </div>
         <div class="step">
           <div class="step-num">03</div>
@@ -916,41 +930,38 @@
       <div class="section-header center">
         <span class="section-label">Membership Plans</span>
         <h2 class="section-title">Choose Your Plan</h2>
-        <p class="section-sub">Cancel anytime. No hidden fees.</p>
+        <p class="section-sub">Cancel anytime. No hidden fees. A free account lets you browse public listings and country summaries.</p>
         <div class="gold-divider center"></div>
       </div>
       <div class="pricing-grid">
         <!-- Starter -->
         <div class="pricing-card">
           <p class="pricing-plan">Starter</p>
-          <div class="pricing-price"><sup>$</sup>29<sub>/mo</sub></div>
+          <div class="pricing-price"><sup>$</sup>5.99<sub>/mo</sub></div>
           <p class="pricing-desc">Perfect for professionals exploring international opportunities.</p>
           <ul class="pricing-features">
-            <li>Access to 30+ country profiles</li>
-            <li>200+ visa-friendly job listings</li>
-            <li>Weekly Intelligence Drop (summary)</li>
-            <li>Filter by country, industry & sponsorship</li>
-            <li>Bookmark up to 20 jobs & countries</li>
+            <li>Every visa-friendly job listing, including members-only roles</li>
+            <li>Full job details with direct links to apply</li>
+            <li>Full country intelligence reports</li>
+            <li>Filter by country, industry &amp; sponsorship</li>
             <li>Email support</li>
           </ul>
-          <button class="btn btn-outline-gold w-full" onclick="navigate('register')">Get Started</button>
+          <button class="btn btn-outline-gold w-full" onclick="choosePlan('Starter')">Get Started</button>
         </div>
         <!-- Pro -->
         <div class="pricing-card featured">
           <div class="popular-badge">Most Popular</div>
           <p class="pricing-plan">Pro</p>
-          <div class="pricing-price"><sup>$</sup>79<sub>/mo</sub></div>
+          <div class="pricing-price"><sup>$</sup>9.99<sub>/mo</sub></div>
           <p class="pricing-desc">For serious movers who want every edge in the global job market.</p>
           <ul class="pricing-features">
             <li>Everything in Starter, plus:</li>
-            <li>Full GCC private listings with packages</li>
-            <li>Complete weekly intelligence drops</li>
-            <li>Salary negotiation guides by country</li>
-            <li>Relocation cost calculators</li>
-            <li>Move Smarter Rewards referral program</li>
-            <li>Priority support & onboarding call</li>
+            <li>GCC &amp; Middle East listings with full salary, housing &amp; flight packages</li>
+            <li>Direct apply links for every GCC role</li>
+            <li>The Weekly Intelligence Drop</li>
+            <li>Priority support</li>
           </ul>
-          <button class="btn btn-gold w-full" onclick="navigate('register')">Go Pro</button>
+          <button class="btn btn-gold w-full" onclick="choosePlan('Pro')">Go Pro</button>
         </div>
       </div>
     </div>
@@ -1163,7 +1174,7 @@
   <div class="page-header" style="background: linear-gradient(180deg, rgba(201,168,76,0.08) 0%, transparent 100%);">
     <span class="section-label">Exclusive Access</span>
     <h1>Private GCC & Middle East Job Market</h1>
-    <p>Exclusive listings not found on mainstream job boards. Full salary, housing, and package details included for Pro members.</p>
+    <p>Roles across Saudi Arabia, UAE, Qatar, Kuwait, Oman &amp; Bahrain. Full salary, housing and flight packages, plus apply links, are included with Pro.</p>
   </div>
 
   <section class="section">
@@ -1173,7 +1184,7 @@
           <h3>🔒 Members-Only Intelligence</h3>
           <p>These listings come directly from our GCC employer network across Saudi Arabia, UAE, Qatar, Kuwait & Oman. Pro membership unlocks full package details, contact information, and application guidance.</p>
         </div>
-        <button class="btn btn-gold" onclick="navigate('register')">Unlock Full Access</button>
+        <button class="btn btn-gold" onclick="choosePlan('Pro')">Unlock with Pro — $9.99/mo</button>
       </div>
       <div class="gcc-grid" id="gccGrid">
         <!-- GCC jobs rendered by JS -->
@@ -1411,6 +1422,10 @@
             </div>
             <div style="font-size:13px; color:var(--text-muted);" id="billingNote">Online payments are coming soon.</div>
           </div>
+          <div style="display:flex; gap:12px; flex-wrap:wrap;" id="upgradeButtons">
+            <button class="btn btn-outline-gold btn-sm" onclick="requestPlan('Starter')">Request Starter — $5.99/mo</button>
+            <button class="btn btn-gold btn-sm" onclick="requestPlan('Pro')">Request Pro — $9.99/mo</button>
+          </div>
 
         </div>
       </div>
@@ -1548,8 +1563,8 @@
         <label class="form-label">Choose Your Plan</label>
         <select class="form-select form-input" id="regPlan">
           <option value="Free">Free Trial (Limited Access)</option>
-          <option value="Starter">Starter — $29/month</option>
-          <option value="Pro">Pro — $79/month</option>
+          <option value="Starter">Starter — $5.99/month</option>
+          <option value="Pro">Pro — $9.99/month</option>
         </select>
         <div style="font-size:12px; color:var(--text-dim); margin-top:6px;">Online payments are coming soon. Everyone starts on Free, and we'll contact you about a paid plan.</div>
       </div>
@@ -1559,6 +1574,16 @@
       </div>
     </div>
   </div>
+</div>
+
+<!-- ===================== PAGE: JOB DETAIL ===================== -->
+<div class="page" id="page-job">
+  <section class="section" style="padding-top:110px;">
+    <div class="container" style="max-width:860px;">
+      <button class="btn btn-ghost btn-sm" id="jobBackBtn" onclick="navigate('jobs')" style="margin-bottom:24px;">← Back to listings</button>
+      <div id="jobDetail"><p style="color:var(--text-muted);">Loading…</p></div>
+    </div>
+  </section>
 </div>
 
 <!-- ===================== PAGE: CHECK EMAIL ===================== -->
@@ -1623,7 +1648,6 @@ let isLoggedIn = false;
 let currentUser = { id: null, name: '', email: '', plan: 'Free', requested_plan: 'Free', country: '', target_countries: '' };
 let JOBS = [];        // global job listings (visible ones)
 let GCC_JOBS = [];    // GCC listings (visible ones)
-let LOCKED = [];      // members-only teasers shown to visitors
 let listingsLoaded = false;
 let recoverySession = null; // kept in memory so a password reset still works if the browser drops stored sessions
 
@@ -1711,12 +1735,18 @@ function updateNavForAuth() {
     set('profileCountryInput', 'value', currentUser.country);
     set('profileTargetInput', 'value', currentUser.target_countries);
     document.querySelectorAll('.js-plan-badge').forEach(b => b.textContent = planLabel(currentUser.plan));
-    const prices = { Free: 'Free — $0/month', Starter: 'Starter — $29/month', Pro: 'Pro — $79/month' };
+    const prices = { Free: 'Free — $0/month', Starter: 'Starter — $5.99/month', Pro: 'Pro — $9.99/month' };
     set('billingPlan', 'textContent', prices[currentUser.plan] || currentUser.plan);
     const note = currentUser.requested_plan !== currentUser.plan && currentUser.requested_plan !== 'Free'
       ? `You've asked for the ${currentUser.requested_plan} plan. We'll be in touch to activate it — online payments are coming soon.`
       : 'Online payments are coming soon.';
     set('billingNote', 'textContent', note);
+    const ub = document.getElementById('upgradeButtons');
+    if (ub) ub.querySelectorAll('button').forEach(b => {
+      const plan = /Pro/.test(b.textContent) ? 'Pro' : 'Starter';
+      const rank = { Free: 0, Starter: 1, Pro: 2 };
+      b.style.display = rank[plan] > rank[currentUser.plan] ? '' : 'none';
+    });
   } else {
     nav.innerHTML = `
       <button class="btn btn-ghost btn-sm" onclick="navigate('login')">Login</button>
@@ -1826,20 +1856,14 @@ async function logout() {
   navigate('home');
 }
 
-// ===== LISTINGS (live from the database) =====
+// ===== LISTINGS (live from the database; the database decides what each plan can see) =====
+const PLAN_PRICE = { Starter: '$5.99/mo', Pro: '$9.99/mo' };
+
 async function loadListings() {
-  const { data, error } = await sb.from('listings')
-    .select('id,market,title,company,country,flag,salary,housing,flights,sponsorship,industry,language,members_only,source_url')
-    .eq('status', 'active')
-    .order('created_at', { ascending: false });
+  const { data, error } = await sb.rpc('get_listings');
   if (error) { console.error(error); showToast('⚠️', 'Could not load listings. Please refresh.'); return; }
   JOBS = data.filter(l => l.market === 'global');
   GCC_JOBS = data.filter(l => l.market === 'gcc');
-  LOCKED = [];
-  if (!isLoggedIn) {
-    const t = await sb.rpc('locked_listing_teasers');
-    if (!t.error) LOCKED = t.data || [];
-  }
   listingsLoaded = true;
   buildJobFilters();
   filterJobs();
@@ -1848,15 +1872,44 @@ async function loadListings() {
 }
 
 function buildJobFilters() {
-  const all = JOBS.concat(LOCKED.filter(l => l.market === 'global'));
   const fill = (id, values, first) => {
     const sel = document.getElementById(id);
     const cur = sel.value;
     const opts = [...new Set(values.filter(Boolean))].sort();
     sel.innerHTML = `<option value="">${first}</option>` + opts.map(v => `<option${v === cur ? ' selected' : ''}>${esc(v)}</option>`).join('');
   };
-  fill('filterCountry', all.map(j => j.country), '🌍 All Countries');
-  fill('filterIndustry', all.map(j => j.industry), '📁 All Industries');
+  fill('filterCountry', JOBS.map(j => j.country), '🌍 All Countries');
+  fill('filterIndustry', JOBS.map(j => j.industry), '📁 All Industries');
+}
+
+// Visitors are sent to sign up with the plan picked; members are taken to Billing to request it
+function choosePlan(plan) {
+  if (!isLoggedIn) {
+    navigate('register');
+    const sel = document.getElementById('regPlan');
+    if (sel && plan) sel.value = plan;
+    return;
+  }
+  navigate('dashboard');
+  showDashTab('billing', null);
+  if (plan && plan !== currentUser.plan) showToast('💳', `Click "Request ${plan}" below. Online payments are coming soon.`);
+}
+
+async function requestPlan(plan) {
+  if (currentUser.plan === plan) { showToast('✓', `You're already on ${plan}.`); return; }
+  const { error } = await sb.from('profiles').update({ requested_plan: plan }).eq('id', currentUser.id);
+  if (error) { console.error(error); showToast('⚠️', 'Could not send your request. Please try again.'); return; }
+  currentUser.requested_plan = plan;
+  updateNavForAuth();
+  showToast('✓', `Request sent. We'll activate ${plan} (${PLAN_PRICE[plan]}) and let you know.`);
+}
+
+function lockLabel(lock) {
+  return lock === 'pro' ? `Pro — ${PLAN_PRICE.Pro}` : `Starter — ${PLAN_PRICE.Starter}`;
+}
+function unlockButton(lock, label) {
+  const plan = lock === 'pro' ? 'Pro' : 'Starter';
+  return `<button class="btn btn-gold btn-sm" onclick="event.stopPropagation(); choosePlan('${plan}')">${label || (isLoggedIn ? 'Upgrade to ' + plan : 'Unlock with ' + plan)}</button>`;
 }
 
 // ===== NAVIGATION =====
@@ -1877,39 +1930,24 @@ function getSponsorClass(s) {
   if (s === 'Relocation Support') return 'tag-reloc';
   return 'tag-both';
 }
-
-function jobAction(j) {
-  const url = safeUrl(j.source_url);
-  if (url) return `<a class="btn btn-outline-gold btn-sm" style="margin-top:4px;text-align:center;" href="${esc(url)}" target="_blank" rel="noopener">View & Apply ↗</a>`;
-  return `<button class="btn btn-outline-gold btn-sm" style="margin-top:4px;" onclick="${isLoggedIn ? "showToast('✓','Application details for this role are being added.')" : "navigate('register')"}">View Details</button>`;
+function fmtPosted(d) {
+  if (!d) return '';
+  const days = Math.floor((Date.now() - new Date(d + 'T00:00:00Z').getTime()) / 86400000);
+  if (days <= 0) return 'Posted today';
+  if (days === 1) return 'Posted yesterday';
+  if (days < 30) return `Posted ${days} days ago`;
+  return 'Posted ' + new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
-function renderJobs(jobs, locked) {
+function renderJobs(jobs) {
   const grid = document.getElementById('jobsGrid');
   if (!listingsLoaded) { grid.innerHTML = '<p style="color:var(--text-muted);">Loading listings…</p>'; return; }
-  const open = jobs.map(j => `
-    <div class="job-card">
-      <div class="job-top">
-        <div>
-          <div class="job-company">${esc(j.company)}</div>
-          <div class="job-title">${esc(j.title)}</div>
-        </div>
-        <div style="font-size:26px; flex-shrink:0;">${esc(j.flag)}</div>
-      </div>
-      <div class="job-location">📍 ${esc(j.country)}</div>
-      <div class="job-salary">${esc(j.salary || 'Salary on application')}</div>
-      <div class="job-tags">
-        ${j.sponsorship ? `<span class="tag ${getSponsorClass(j.sponsorship)}">${esc(j.sponsorship)}</span>` : ''}
-        ${j.industry ? `<span class="tag tag-industry">${esc(j.industry)}</span>` : ''}
-      </div>
-      ${jobAction(j)}
-    </div>`);
-  const teasers = (locked || []).map(j => `
+  grid.innerHTML = jobs.map(j => j.locked ? `
     <div class="job-card locked">
       <div class="lock-overlay">
         <div class="lock-icon">🔒</div>
-        <p>Members Only Listing</p>
-        <button class="btn btn-gold btn-sm" onclick="navigate('register')">Unlock Access</button>
+        <p>Members-only listing · ${lockLabel(j.locked)}</p>
+        ${unlockButton(j.locked)}
       </div>
       <div class="job-top">
         <div><div class="job-company">Employer hidden</div><div class="job-title">Members-only role</div></div>
@@ -1918,9 +1956,23 @@ function renderJobs(jobs, locked) {
       <div class="job-location">📍 ${esc(j.country)}</div>
       <div class="job-salary">●●●●● – ●●●●●</div>
       <div class="job-tags">${j.industry ? `<span class="tag tag-industry">${esc(j.industry)}</span>` : ''}</div>
-    </div>`);
-  const html = open.concat(teasers).join('');
-  grid.innerHTML = html || '<p style="color:var(--text-muted);">No listings match your filters right now. New roles are added every few days.</p>';
+    </div>` : `
+    <div class="job-card" style="cursor:pointer;" onclick="openJob(${j.id})">
+      <div class="job-top">
+        <div>
+          <div class="job-company">${esc(j.company)}</div>
+          <div class="job-title">${esc(j.title)}</div>
+        </div>
+        <div style="font-size:26px; flex-shrink:0;">${esc(j.flag)}</div>
+      </div>
+      <div class="job-location">📍 ${esc(j.country)}${j.posted_at ? ` · <span style="color:var(--text-dim);">${fmtPosted(j.posted_at)}</span>` : ''}</div>
+      <div class="job-salary">${esc(j.salary || 'Salary on application')}</div>
+      <div class="job-tags">
+        ${j.sponsorship ? `<span class="tag ${getSponsorClass(j.sponsorship)}">${esc(j.sponsorship)}</span>` : ''}
+        ${j.industry ? `<span class="tag tag-industry">${esc(j.industry)}</span>` : ''}
+      </div>
+      <button class="btn btn-outline-gold btn-sm" style="margin-top:4px;" onclick="event.stopPropagation(); openJob(${j.id})">View Details</button>
+    </div>`).join('') || '<p style="color:var(--text-muted);">No listings match your filters right now. New roles are added every few days.</p>';
 }
 
 function filterJobs() {
@@ -1928,12 +1980,14 @@ function filterJobs() {
   const country = document.getElementById('filterCountry').value;
   const industry = document.getElementById('filterIndustry').value;
   const sponsorship = document.getElementById('filterSponsorship').value;
-  const match = (j, withText) =>
-    (!country || j.country === country) && (!industry || j.industry === industry) &&
-    (!withText || !search || (j.title || '').toLowerCase().includes(search) || (j.company || '').toLowerCase().includes(search));
-  const filtered = JOBS.filter(j => match(j, true) && (!sponsorship || j.sponsorship === sponsorship));
-  const lockedGlobal = (search || sponsorship) ? [] : LOCKED.filter(j => j.market === 'global' && match(j, false));
-  renderJobs(filtered, lockedGlobal);
+  const filtered = JOBS.filter(j => {
+    if (country && j.country !== country) return false;
+    if (industry && j.industry !== industry) return false;
+    if (j.locked) return !search && !sponsorship; // locked cards have no title or sponsorship to match on
+    if (sponsorship && j.sponsorship !== sponsorship) return false;
+    return !search || (j.title || '').toLowerCase().includes(search) || (j.company || '').toLowerCase().includes(search);
+  });
+  renderJobs(filtered);
 }
 
 // ===== RENDER GCC =====
@@ -1946,10 +2000,11 @@ function getLangClass(l) {
 function renderGCC() {
   const grid = document.getElementById('gccGrid');
   if (!listingsLoaded) { grid.innerHTML = '<p style="color:var(--text-muted);">Loading listings…</p>'; return; }
-  const open = GCC_JOBS.map(j => {
-    const url = safeUrl(j.source_url);
+  grid.innerHTML = GCC_JOBS.map(j => {
+    const locked = !!j.locked;
+    const val = v => locked ? '<span class="pkg-locked">●●●●●●</span>' : esc(v || '—');
     return `
-    <div class="gcc-card">
+    <div class="gcc-card" style="cursor:pointer;" onclick="openJob(${j.id})">
       <div class="gcc-top">
         <div>
           <div class="gcc-company">${esc(j.company)} · ${esc(j.flag)} ${esc(j.country)}</div>
@@ -1958,37 +2013,81 @@ function renderGCC() {
         ${j.industry ? `<span class="tag tag-industry">${esc(j.industry)}</span>` : ''}
       </div>
       <div class="gcc-package">
-        <div class="pkg-item"><span class="pkg-label">Base Salary</span><span class="pkg-val">${esc(j.salary || '—')}</span></div>
-        <div class="pkg-item"><span class="pkg-label">Housing</span><span class="pkg-val">${esc(j.housing || '—')}</span></div>
-        <div class="pkg-item"><span class="pkg-label">Flights</span><span class="pkg-val">${esc(j.flights || '—')}</span></div>
+        <div class="pkg-item"><span class="pkg-label">Base Salary</span><span class="pkg-val">${val(j.salary)}</span></div>
+        <div class="pkg-item"><span class="pkg-label">Housing</span><span class="pkg-val">${val(j.housing)}</span></div>
+        <div class="pkg-item"><span class="pkg-label">Flights</span><span class="pkg-val">${val(j.flights)}</span></div>
       </div>
       <div class="gcc-footer">
         ${j.language ? `<span class="tag ${getLangClass(j.language)}">${esc(j.language)}</span>` : '<span></span>'}
-        ${url
-          ? `<a class="btn btn-outline-gold btn-sm" href="${esc(url)}" target="_blank" rel="noopener">View & Apply ↗</a>`
-          : `<button class="btn btn-outline-gold btn-sm" onclick="${isLoggedIn ? "showToast('✓','Application details for this role are being added.')" : "navigate('register')"}">View Full Details</button>`}
+        ${locked ? unlockButton('pro', '🔒 Unlock package with Pro') : `<button class="btn btn-outline-gold btn-sm" onclick="event.stopPropagation(); openJob(${j.id})">View Full Details</button>`}
       </div>
     </div>`;
-  });
-  const teasers = LOCKED.filter(j => j.market === 'gcc').map(j => `
-    <div class="gcc-card">
-      <div class="lock-overlay" style="border-radius: var(--radius); backdrop-filter: blur(8px);">
-        <div class="lock-icon">🔒</div>
-        <p>Members-only listing</p>
-        <button class="btn btn-gold btn-sm" onclick="navigate('register')">Create Free Account</button>
+  }).join('') || '<p style="color:var(--text-muted);">No GCC listings right now. New roles are added every few days.</p>';
+}
+
+// ===== JOB DETAIL PAGE =====
+async function openJob(id) {
+  const box = document.getElementById('jobDetail');
+  box.innerHTML = '<p style="color:var(--text-muted);">Loading…</p>';
+  navigate('job');
+  const { data, error } = await sb.rpc('get_listing', { p_id: id });
+  const j = data && data[0];
+  if (error || !j) {
+    box.innerHTML = '<div class="detail-card"><h2 style="font-family:var(--font-display);">This listing is no longer available</h2><p style="color:var(--text-muted);margin-top:8px;">It may have been filled or removed. New roles are added every few days.</p></div>';
+    return;
+  }
+  const gcc = j.market === 'gcc';
+  document.getElementById('jobBackBtn').onclick = () => navigate(gcc ? 'gcc' : 'jobs');
+  document.getElementById('jobBackBtn').textContent = gcc ? '← Back to GCC market' : '← Back to listings';
+  if (j.locked === 'starter') {
+    box.innerHTML = `<div class="detail-card"><div style="font-size:30px;">${esc(j.flag)}</div>
+      <h2 style="font-family:var(--font-display); font-size:28px; margin-top:6px;">Members-only role in ${esc(j.country)}</h2>
+      <div class="upgrade-box"><h3>Unlock with Starter — ${PLAN_PRICE.Starter}</h3><p>Starter shows every members-only listing with the employer, salary, full description and a direct link to apply.</p>${unlockButton('starter', isLoggedIn ? 'Request Starter' : 'Create account & choose Starter')}</div></div>`;
+    return;
+  }
+  const url = safeUrl(j.apply_url);
+  const fact = (k, v) => v ? `<div class="detail-fact"><div class="k">${k}</div><div class="v">${esc(v)}</div></div>` : '';
+  const section = (h, t) => t ? `<div class="detail-section"><h3>${h}</h3><p>${esc(t)}</p></div>` : '';
+  const checked = j.last_checked_at ? `Link checked ${new Date(j.last_checked_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })}` : '';
+  let host = '';
+  try { host = url ? new URL(url).hostname.replace(/^www\./, '') : ''; } catch {}
+  box.innerHTML = `
+    <div class="detail-card">
+      <div style="display:flex; justify-content:space-between; gap:16px; align-items:flex-start;">
+        <div>
+          <div class="job-company" style="font-size:14px;">${esc(j.company)}</div>
+          <h1 style="font-family:var(--font-display); font-size:30px; line-height:1.2; margin-top:4px;">${esc(j.title)}</h1>
+        </div>
+        <div style="font-size:34px; flex-shrink:0;">${esc(j.flag)}</div>
       </div>
-      <div class="gcc-top">
-        <div><div class="gcc-company">Employer hidden · ${esc(j.flag)} ${esc(j.country)}</div><div class="gcc-title">Members-only role</div></div>
+      <div class="detail-meta">
+        <span>📍 ${esc(j.country)}</span>
+        ${j.employment_type ? `<span>🕒 ${esc(j.employment_type)}</span>` : ''}
+        ${j.posted_at ? `<span>📅 ${fmtPosted(j.posted_at)}</span>` : ''}
+        ${checked ? `<span>✓ ${checked}</span>` : ''}
+      </div>
+      <div class="job-tags">
+        ${j.sponsorship ? `<span class="tag ${getSponsorClass(j.sponsorship)}">${esc(j.sponsorship)}</span>` : ''}
+        ${j.language ? `<span class="tag ${getLangClass(j.language)}">${esc(j.language)}</span>` : ''}
         ${j.industry ? `<span class="tag tag-industry">${esc(j.industry)}</span>` : ''}
       </div>
-      <div class="gcc-package">
-        <div class="pkg-item"><span class="pkg-label">Base Salary</span><span class="pkg-val">●●●●●</span></div>
-        <div class="pkg-item"><span class="pkg-label">Housing</span><span class="pkg-val">●●●●●</span></div>
-        <div class="pkg-item"><span class="pkg-label">Flights</span><span class="pkg-val">●●●●●</span></div>
-      </div>
-      <div class="gcc-footer"><span></span></div>
-    </div>`);
-  grid.innerHTML = open.concat(teasers).join('') || '<p style="color:var(--text-muted);">No GCC listings right now. New roles are added every few days.</p>';
+      ${j.locked === 'pro' ? `
+        <div class="upgrade-box"><h3>🔒 Full package and apply link — Pro ${PLAN_PRICE.Pro}</h3>
+          <p>Pro shows the salary, housing and flight package, the full description, visa notes and a direct link to apply for every GCC role.</p>
+          ${unlockButton('pro', isLoggedIn ? 'Request Pro' : 'Create account & choose Pro')}</div>` : `
+        <div class="detail-facts">
+          ${fact(gcc ? 'Base salary' : 'Salary', j.salary)}
+          ${fact('Housing', j.housing)}
+          ${fact('Flights', j.flights)}
+        </div>
+        ${section('About the role', j.description)}
+        ${section('Requirements', j.requirements)}
+        ${section('Visa & relocation', j.visa_notes)}
+        ${!j.description && !j.requirements ? `<div class="detail-section"><p>${url ? 'The full description is on the employer\'s posting.' : 'Full details for this role are being added. Check back soon.'}</p></div>` : ''}
+        ${url ? `<div style="margin-top:28px; display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+          <a class="btn btn-gold" href="${esc(url)}" target="_blank" rel="noopener">Apply on ${esc(host || 'employer site')} ↗</a>
+          <span style="font-size:12px; color:var(--text-dim);">Opens the employer's own posting. GlobalHound never charges to apply.</span></div>` : ''}`}
+    </div>`;
 }
 
 // ===== RENDER COUNTRIES =====
