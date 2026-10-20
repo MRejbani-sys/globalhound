@@ -1,0 +1,231 @@
+{
+  "researched": "2026-10-20",
+  "countries": [
+    {
+      "slug": "uae",
+      "summary": "No income tax, employer-sponsored work visas, and a 10-year Golden Visa for well-paid graduates. High rents in Dubai, and residence stays tied to a job or Golden Visa rather than a permanent route.",
+      "sections": {
+        "visa": "Standard employment visa: your employer applies for it. It is valid for 2 years and renewable.\nGreen visa: a self-sponsored residence visa for skilled employees, freelancers and the self-employed.\nGolden Visa for skilled professionals (10 years): monthly salary of at least AED 30,000, a bachelor's degree or equivalent, and a job at MOHRE occupational level 1 (managers, executives) or 2 (professionals in science, engineering, health, education and similar fields).",
+        "costs": "Your employer applies for and sponsors the standard work visa. Golden Visa holders sponsor themselves.",
+        "tax": "No personal income tax on salaries.\nIndividuals running a business pay 9% corporate tax only if business turnover exceeds AED 1 million; wages and personal investment income are not counted.",
+        "living": "Dubai: about AED 4,212/month for a single person excluding rent; about AED 14,838 for a family of four. 1-bedroom rent about AED 9,100 (centre) or AED 5,560 (outside).",
+        "healthcare": "Health insurance is provided through your employer. Check what your contract covers for your family.",
+        "family": "Golden Visa holders can sponsor their spouse and children. Other residents can sponsor family when they meet the salary and housing conditions.",
+        "residency": "There is no standard permanent residence. The 10-year renewable Golden Visa is the long-term option."
+      },
+      "sources": [
+        { "title": "UAE Government portal — Residence visa for working in the UAE", "url": "https://u.ae/en/information-and-services/visa-and-emirates-id/residence-visas/residence-visa-for-working-in-the-uae" },
+        { "title": "UAE Government portal — Golden visa", "url": "https://u.ae/en/information-and-services/visa-and-emirates-id/residence-visas/golden-visa" },
+        { "title": "Abu Dhabi ADDED — Golden Visa for skilled professionals", "url": "https://added.gov.ae/en/live/long-term-residency/abu-dhabi-golden-visa/for-specialists/for-skilled-professionals" },
+        { "title": "PwC Worldwide Tax Summaries — UAE", "url": "https://taxsummaries.pwc.com/united-arab-emirates/individual/taxes-on-personal-income" },
+        { "title": "Numbeo — Dubai", "url": "https://www.numbeo.com/cost-of-living/in/Dubai" }
+      ]
+    },
+    {
+      "slug": "germany",
+      "summary": "Europe's largest economy, with a fast EU Blue Card route for graduates and a job-search Opportunity Card. High taxes, but strong worker protections and a path to settlement in under two years with good German.",
+      "sections": {
+        "visa": "EU Blue Card: for graduates with a job offer of 6+ months that matches their degree. Minimum gross salary €48,300/year (2025), or €43,759.80 in shortage occupations, for recent graduates (degree under 3 years old) and for IT specialists without a degree (3 of the last 7 years in IT).\nSkilled worker visa (Section 18b): for graduates who don't meet the Blue Card salary.\nOpportunity Card (Chancenkarte): up to 1 year in Germany to look for work. You need either a fully recognised qualification, or a degree or 2-year vocational qualification plus 6 points and German A1 or English B2. Part-time or trial work of up to 20 hours a week is allowed.",
+        "costs": "The Blue Card is issued for the length of your contract plus 3 months, up to 4 years. Fees and processing times are set by the German embassy or consulate where you apply.",
+        "tax": "Income tax 2025 (single): 0% up to €12,096; 14%–42% progressive up to €68,429; 42% up to €277,825; 45% above.\nSolidarity surcharge of 5.5% of income tax, only at higher incomes (in full from about €105,500 taxable income).\nChurch tax of 8%–9% of income tax if you are registered with a church.",
+        "living": "Berlin: about €1,056/month for a single person excluding rent; about €3,627 for a family of four. 1-bedroom rent about €1,263 (centre) or €995 (outside).\nMunich: about €1,075 single / €3,758 family excluding rent. 1-bedroom rent about €1,489 (centre) or €1,115 (outside).",
+        "healthcare": "Health insurance is compulsory. Most employees join statutory insurance, with contributions shared with the employer; higher earners can choose private cover.",
+        "family": "Blue Card holders can bring a spouse and children through family reunification. Check the German embassy's family reunification guidance for the requirements.",
+        "residency": "Settlement permit after 27 months on a Blue Card with German at A1, or after 21 months with German at B1.\nYou can change jobs on a valid Blue Card; in the first year, tell the foreigners authority."
+      },
+      "sources": [
+        { "title": "Make it in Germany — EU Blue Card", "url": "https://www.make-it-in-germany.com/en/visa-residence/types/eu-blue-card" },
+        { "title": "German Missions in Canada — Opportunity Card", "url": "https://canada.diplo.de/ca-en/consular-services/visa/long-term/chancenkarte-2678582" },
+        { "title": "PwC Worldwide Tax Summaries — Germany", "url": "https://taxsummaries.pwc.com/germany/individual/taxes-on-personal-income" },
+        { "title": "Numbeo — Berlin", "url": "https://www.numbeo.com/cost-of-living/in/Berlin" },
+        { "title": "Numbeo — Munich", "url": "https://www.numbeo.com/cost-of-living/in/Munich" }
+      ]
+    },
+    {
+      "slug": "canada",
+      "summary": "Express Entry leads straight to permanent residence, without needing a job offer for most applicants. Moderate-to-high taxes and pricey big-city rents, with citizenship a few years after landing.",
+      "sections": {
+        "visa": "Express Entry manages three permanent-residence programmes:\nFederal Skilled Worker: 1 continuous year of skilled work (TEER 0–3) in the last 10 years, language at CLB 7, and secondary education. A job offer is optional but earns points.\nCanadian Experience Class: 1 year of skilled Canadian work in the last 3 years; CLB 7 (TEER 0–1) or CLB 5 (TEER 2–3).\nFederal Skilled Trades: 2 years in a skilled trade in the last 5 years; CLB 5 speaking and listening, CLB 4 reading and writing; a job offer or a Canadian certificate of qualification.\nA provincial nomination adds points so you can be invited quickly.",
+        "costs": "Proof of funds (updated 7 July 2025): CAD 15,263 for 1 person; 19,001 for 2; 23,360 for 3; 28,362 for 4; 32,168 for 5; plus CAD 4,112 for each person beyond 7.\nYou don't need proof of funds under the Canadian Experience Class, or if you are already authorised to work in Canada and have a valid job offer.",
+        "tax": "Federal income tax 2026: 14% up to CAD 58,523; 20.5% to 117,045; 26% to 181,440; 29% to 258,482; 33% above. Provincial tax is added on top.\nCombined top rates 2026: Ontario 53.5%, British Columbia 53.5%, Alberta 48%.",
+        "living": "Toronto: about CAD 1,428/month for a single person excluding rent; about CAD 5,277 for a family of four. 1-bedroom rent about CAD 2,259 (centre) or CAD 2,020 (outside).",
+        "healthcare": "Permanent residents join their province's public health insurance plan. Some provinces have a waiting period, so arrange private cover for your first months if needed.",
+        "family": "Your spouse or partner and dependent children can be included in your permanent residence application.",
+        "residency": "Express Entry gives permanent residence from day one. Citizenship generally needs 1,095 days of physical presence in the 5 years before applying."
+      },
+      "sources": [
+        { "title": "IRCC — Express Entry: who can apply", "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/who-can-apply.html" },
+        { "title": "IRCC — Proof of funds", "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/documents/proof-funds.html" },
+        { "title": "PwC Worldwide Tax Summaries — Canada", "url": "https://taxsummaries.pwc.com/canada/individual/taxes-on-personal-income" },
+        { "title": "Numbeo — Toronto", "url": "https://www.numbeo.com/cost-of-living/in/Toronto" }
+      ]
+    },
+    {
+      "slug": "singapore",
+      "summary": "Low taxes and a business-first economy, with an Employment Pass whose salary floor rises with age. Very high rents, and a points test that weighs your employer's workforce as well as your profile.",
+      "sections": {
+        "visa": "Employment Pass, Stage 1 (qualifying salary), for new applications until 31 December 2026: from S$5,600/month at age 23 or below, rising to S$10,700 at 45 or above (financial services S$6,200 to S$11,800). Examples: age 30 S$7,223; age 35 S$8,382; age 40 S$9,541.\nFrom 1 January 2027 for new applications: S$6,000 to S$11,500 (financial services S$6,600 to S$12,700).\nStage 2, COMPASS: you need 40 points, scored on salary, qualifications, workforce diversity and local hiring, with bonuses for shortage occupations and strategic priorities. Salaries of S$22,500/month or more are exempt.\nEmployers must first advertise the job locally under the Fair Consideration Framework.",
+        "costs": "Your employer applies to the Ministry of Manpower. Use MOM's Self-Assessment Tool to check eligibility before applying.",
+        "tax": "Resident income tax (YA 2026): 0% on the first S$20,000, rising through bands to 24% above S$1,000,000.\nNon-residents pay a flat 15% on employment income, or resident rates if higher.",
+        "living": "Singapore: about S$1,525/month for a single person excluding rent; about S$5,590 for a family of four. 1-bedroom rent about S$3,772 (centre) or S$2,757 (outside).",
+        "healthcare": "Employment Pass holders aren't covered by the national MediShield Life scheme. Most employers provide private medical insurance, so check your offer.",
+        "family": "Employment Pass holders who meet MOM's salary requirement can apply for Dependant's Passes for a spouse and children. Check MOM for the current threshold.",
+        "residency": "Employment Pass holders can apply for permanent residence. Approval is discretionary."
+      },
+      "sources": [
+        { "title": "Ministry of Manpower — Employment Pass eligibility", "url": "https://www.mom.gov.sg/passes-and-permits/employment-pass/eligibility" },
+        { "title": "PwC Worldwide Tax Summaries — Singapore", "url": "https://taxsummaries.pwc.com/singapore/individual/taxes-on-personal-income" },
+        { "title": "Numbeo — Singapore", "url": "https://www.numbeo.com/cost-of-living/in/Singapore" }
+      ]
+    },
+    {
+      "slug": "portugal",
+      "summary": "One of Europe's more affordable bases, with a highly qualified (D3) visa at a modest salary floor and English common in tech. Progressive taxes up to 48%, and permanent residence after 5 years.",
+      "sections": {
+        "visa": "D3 highly qualified visa: a job with a Portugal-based company in a role needing specialised skills, with more than 5 years of experience or a suitable qualification. The contract must run at least 6 months.\nThe 2026 salary floor is about €1,611/month, based on 1.5 times the national average salary or 3 times the IAS index (per a Portuguese law firm's summary; confirm with the consulate).",
+        "costs": "Consulate fee €110, then €177.08 at the AIMA residence stage.\nThe consulate has 30 days to issue the visa, and AIMA 90 days to issue the residence card once all documents are in.\nThe residence visa is valid for 4 months (two entries). The residence card lasts 2 years and can be renewed for 3.",
+        "tax": "Income tax 2026: 12.5% up to €8,342, rising through bands to 44.6% up to €86,634 and 48% above.\nA solidarity rate of 2.5% applies above €80,000, and 5% above €250,000.",
+        "living": "Lisbon: about €760/month for a single person excluding rent; about €2,744 for a family of four. 1-bedroom rent about €1,425 (centre) or €1,063 (outside).",
+        "healthcare": "Legal residents can register with the national health service (SNS) and use public healthcare. Many professionals also take private insurance.",
+        "family": "Visas for immediate family can be filed together with the main D3 application, with proof of family ties.",
+        "residency": "Permanent residence after 5 years of legal residence."
+      },
+      "sources": [
+        { "title": "Lamares, Capela & Associados — D3 visa in 2026", "url": "https://lamarescapela.pt/en/knowledge/immigration/d3-visa-for-highly-qualified-workers-in-portugal-in-2026/" },
+        { "title": "PwC Worldwide Tax Summaries — Portugal", "url": "https://taxsummaries.pwc.com/portugal/individual/taxes-on-personal-income" },
+        { "title": "Numbeo — Lisbon", "url": "https://www.numbeo.com/cost-of-living/in/Lisbon" }
+      ]
+    },
+    {
+      "slug": "netherlands",
+      "summary": "A fast, employer-led Highly Skilled Migrant permit with clear salary floors, and English widely spoken at work. High taxes and very high Amsterdam rents, with permanent residence after 5 years.",
+      "sections": {
+        "visa": "Highly Skilled Migrant permit: your employer must be an IND-recognised sponsor, and applies for you.\n2026 gross monthly salary (excluding holiday pay): €5,942 if you are 30 or older; €4,357 if under 30; €3,122 under the reduced criterion (for example in the orientation year, or within 3 years of graduating).\nEU Blue Card: €5,942/month, or €4,754 under the reduced criterion.\nThe amounts change every 1 January.",
+        "costs": "The permit lasts as long as your contract, up to 5 years. Your employer files the application through the IND recognised-sponsor process.",
+        "tax": "Box 1 income tax 2026: 8.10% up to €38,883 (plus 27.65% national insurance in this band); 37.56% up to €78,426; 49.50% above.",
+        "living": "Amsterdam: about €1,133/month for a single person excluding rent; about €4,042 for a family of four. 1-bedroom rent about €2,336 (centre) or €1,743 (outside).",
+        "healthcare": "Everyone who lives and works in the Netherlands must take out Dutch basic health insurance.",
+        "family": "Your employer can apply for your family members through the recognised-sponsor process at the same time.",
+        "residency": "After 5 years on a residence permit you can apply for permanent residence."
+      },
+      "sources": [
+        { "title": "IND — Highly skilled migrant", "url": "https://ind.nl/en/residence-permits/work/highly-skilled-migrant" },
+        { "title": "IND — Required amounts (income requirements)", "url": "https://ind.nl/en/required-amounts-income-requirements" },
+        { "title": "PwC Worldwide Tax Summaries — Netherlands", "url": "https://taxsummaries.pwc.com/netherlands/individual/taxes-on-personal-income" },
+        { "title": "Numbeo — Amsterdam", "url": "https://www.numbeo.com/cost-of-living/in/Amsterdam" }
+      ]
+    },
+    {
+      "slug": "australia",
+      "summary": "High salaries and an employer-sponsored Skills in Demand visa with clear income thresholds. Expensive cities and mandatory private health cover, with a sponsored route to permanent residence.",
+      "sections": {
+        "visa": "Skills in Demand visa (subclass 482): your employer sponsors you.\nCore Skills stream: for occupations on the Core Skills Occupation List, paying at least the Core Skills Income Threshold of AUD 79,499 (from 1 July 2026; previously AUD 76,515).\nSpecialist Skills stream: for highly paid roles at or above AUD 146,717 (from 1 July 2026; previously AUD 141,210).",
+        "costs": "Check current visa charges with the Department of Home Affairs pricing estimator before applying; charges are usually revised each 1 July.",
+        "tax": "Resident income tax 2026/27: 0% up to AUD 18,200; 15% to 45,000; 30% to 135,000; 37% to 190,000; 45% above. Plus a 2% Medicare levy.\nNon-residents pay 30% from the first dollar up to AUD 135,000, then the same higher rates, and no Medicare levy.",
+        "living": "Sydney: about AUD 1,819/month for a single person excluding rent; about AUD 6,544 for a family of four. 1-bedroom rent about AUD 3,596 (centre) or AUD 2,504 (outside).",
+        "healthcare": "Most 482 visa holders can't use Medicare and must keep private health insurance for the whole stay (citizens of countries with a reciprocal agreement have some cover).",
+        "family": "Your partner and children can be included on the visa, and your partner can work.",
+        "residency": "Your employer can later nominate you for permanent residence through the Employer Nomination Scheme (subclass 186). Check Home Affairs for the current time-in-job requirement."
+      },
+      "sources": [
+        { "title": "Department of Home Affairs — Skills in Demand visa (subclass 482)", "url": "https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/skills-in-demand-visa-subclass-482" },
+        { "title": "Erickson Immigration Group — 482 and 186 thresholds from July 2026", "url": "https://eiglaw.com/australia-announces-indexed-increases-to-salary-thresholds-for-subclass-482-and-186-visas-effective-july-2026/" },
+        { "title": "PwC Worldwide Tax Summaries — Australia", "url": "https://taxsummaries.pwc.com/australia/individual/taxes-on-personal-income" },
+        { "title": "Numbeo — Sydney", "url": "https://www.numbeo.com/cost-of-living/in/Sydney" }
+      ]
+    },
+    {
+      "slug": "saudi-arabia",
+      "summary": "No income tax on salaries and large employers hiring across Vision 2030 projects. Work and residence are tied to your employer, and there is a monthly levy for each dependant you bring.",
+      "sections": {
+        "visa": "Your employer applies for a work-visa allocation through the Ministry of Human Resources (Qiwa). You then get the visa stamped at the Saudi embassy with attested documents.\nAfter a medical examination on arrival, your employer issues your residence permit (iqama) through Muqeem within 90 days and renews it.\nEmployer processing and visa stamping together typically take 4–12 weeks.",
+        "costs": "Approximate fees: work visa about SAR 100; iqama about SAR 650 a year; dependant levy SAR 400 per dependant per month. Figures are from an independent guide; confirm with your employer.",
+        "tax": "No income tax on earnings from employment in Saudi Arabia.",
+        "living": "Riyadh: about SAR 3,387/month for a single person excluding rent; about SAR 12,450 for a family of four. 1-bedroom rent about SAR 4,455 (centre) or SAR 3,129 (outside).",
+        "healthcare": "Health insurance for employees is mandatory and arranged by the employer.",
+        "family": "You can sponsor dependants if your salary is above the threshold, which varies by profession; check on the Ministry of Human Resources site. Dependants get their own iqama, and a spouse needs their own work visa to work.",
+        "residency": "Employer-sponsored residence does not lead to permanent residence. The separate, fee-based Premium Residency programme offers long-term residence, property ownership and the right to work without a sponsor."
+      },
+      "sources": [
+        { "title": "Visa Atlas — Saudi work visa and iqama (2026 guide)", "url": "https://visaatlas.org/visas/saudi-arabia/work-visa-iqama" },
+        { "title": "PwC Worldwide Tax Summaries — Saudi Arabia", "url": "https://taxsummaries.pwc.com/saudi-arabia/individual/taxes-on-personal-income" },
+        { "title": "Numbeo — Riyadh", "url": "https://www.numbeo.com/cost-of-living/in/Riyadh" }
+      ]
+    },
+    {
+      "slug": "qatar",
+      "summary": "Tax-free salaries and employer-sponsored residence, with family residence open from QAR 6,000–10,000 a month. Residence stays linked to your job.",
+      "sections": {
+        "visa": "Your employer sponsors your work residence permit, and your residence is linked to that employment.",
+        "costs": "Your employer arranges and normally pays for the work visa and residence permit.",
+        "tax": "No income tax on salaries, wages or allowances from employment. Self-employed people may owe tax on Qatar-sourced income.",
+        "living": "Doha: about QAR 3,246/month for a single person excluding rent; about QAR 11,883 for a family of four. 1-bedroom rent about QAR 6,914 (centre) or QAR 4,293 (outside).",
+        "healthcare": "Health insurance is mandatory for expatriate residents and is provided through the employer.",
+        "family": "Government and semi-government employees: family housing from the employer, or a salary of at least QAR 10,000/month.\nPrivate-sector employees in technical or specialised jobs: at least QAR 6,000/month with employer family housing, or QAR 10,000 without (Ministry of Interior rules reported January 2024).",
+        "residency": "Residence is tied to employment. There is no general route to permanent residence for most expatriate workers."
+      },
+      "sources": [
+        { "title": "Fragomen — Qatar family residency requirements", "url": "https://www.fragomen.com/insights/qatar-revised-family-residency-and-visit-visa-requirements-for-sponsoring-principals.html" },
+        { "title": "PwC Worldwide Tax Summaries — Qatar", "url": "https://taxsummaries.pwc.com/qatar/individual/taxes-on-personal-income" },
+        { "title": "Numbeo — Doha", "url": "https://www.numbeo.com/cost-of-living/in/Doha" }
+      ]
+    },
+    {
+      "slug": "united-kingdom",
+      "summary": "A sponsored Skilled Worker visa with a clear salary floor and fixed fees, and English as the working language. Expensive cities and an annual health surcharge, with settlement currently possible after 5 years.",
+      "sections": {
+        "visa": "Skilled Worker visa: you need a job offer from a Home Office-approved sponsor, a certificate of sponsorship, and an eligible occupation.\nSalary: at least £41,700/year or the going rate for the job, whichever is higher. Some applicants who don't meet the usual rules may qualify at £33,400 or more (outside healthcare and education).\nYou must prove you can speak, read, write and understand English.",
+        "costs": "Application fee from outside the UK: £819 (up to 3 years) or £1,618 (over 3 years). From inside the UK: £943 or £1,865. Immigration salary list jobs: £628 or £1,235.\nImmigration Health Surcharge: £1,035 per person per year.\nPersonal savings of £1,270, unless your sponsor certifies support.\nDecisions take about 3 weeks from outside the UK and about 8 weeks from inside. The visa lasts up to 5 years before you extend.",
+        "tax": "Income tax 2026/27 (England, Wales, Northern Ireland): 0% up to £12,570; 20% to £50,270; 40% to £125,140; 45% above.",
+        "living": "London: about £1,079/month for a single person excluding rent; about £3,807 for a family of four. 1-bedroom rent about £2,128 (centre) or £1,693 (outside).",
+        "healthcare": "Paying the Immigration Health Surcharge gives you NHS care on broadly the same basis as UK residents.",
+        "family": "Your partner and children can apply as dependants. Each pays the application fee and health surcharge, and must show savings.",
+        "residency": "After 5 years you may be able to apply to settle permanently (indefinite leave to remain). The government has proposed changes to settlement rules, so check GOV.UK before planning around this."
+      },
+      "sources": [
+        { "title": "GOV.UK — Skilled Worker visa", "url": "https://www.gov.uk/skilled-worker-visa" },
+        { "title": "GOV.UK — Skilled Worker visa: your job", "url": "https://www.gov.uk/skilled-worker-visa/your-job" },
+        { "title": "GOV.UK — Skilled Worker visa: how much it costs", "url": "https://www.gov.uk/skilled-worker-visa/how-much-it-costs" },
+        { "title": "PwC Worldwide Tax Summaries — United Kingdom", "url": "https://taxsummaries.pwc.com/united-kingdom/individual/taxes-on-personal-income" },
+        { "title": "Numbeo — London", "url": "https://www.numbeo.com/cost-of-living/in/London" }
+      ]
+    },
+    {
+      "slug": "new-zealand",
+      "summary": "An employer-led work visa through accredited employers, with partner work rights and Green List shortcuts to residence. A mid-range tax system, and rents high relative to salaries in Auckland.",
+      "sections": {
+        "visa": "Accredited Employer Work Visa (AEWV): a job offer from an accredited employer, in a role that has passed a Job Check, for at least 30 hours a week at the market rate.\nThe immigration median wage, used for some thresholds, is NZD 35.00/hour from 9 March 2026.\nThe visa lasts up to 5 years for skill level 1–3 jobs, or 3 years for skill level 4–5.",
+        "costs": "NZD 480 application fee plus NZD 1,060 immigration levy (NZD 1,540 in total). Immigration New Zealand decides 80% of applications within 5.5 weeks (per an independent adviser's October 2026 guide).",
+        "tax": "Income tax: 10.5% up to NZD 15,600; 17.5% to 53,500; 30% to 78,100; 33% to 180,000; 39% above.",
+        "living": "Auckland: about NZD 1,850/month for a single person excluding rent; about NZD 6,696 for a family of four. 1-bedroom rent about NZD 2,342 (centre) or NZD 2,173 (outside).",
+        "healthcare": "Work visa holders allowed to stay 2 years or more are generally eligible for publicly funded healthcare.",
+        "family": "Your partner can get an open work visa if you earn at least NZD 28/hour in a skill level 1–3 job. Dependent children can get dependent child visas, usually for skill level 1–3 jobs.",
+        "residency": "Skilled Migrant Category for skill level 1–3 roles. Green List Tier 1 jobs can apply for residence straight away; Tier 2 after 24 months in the job."
+      },
+      "sources": [
+        { "title": "Immigration New Zealand — Accredited Employer Work Visa", "url": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa" },
+        { "title": "Visa Pilot — AEWV 2026 guide", "url": "https://visapilot.nz/visas/accredited-employer-work-visa" },
+        { "title": "PwC Worldwide Tax Summaries — New Zealand", "url": "https://taxsummaries.pwc.com/new-zealand/individual/taxes-on-personal-income" },
+        { "title": "Numbeo — Auckland", "url": "https://www.numbeo.com/cost-of-living/in/Auckland" }
+      ]
+    },
+    {
+      "slug": "japan",
+      "summary": "Very safe, with a points-based Highly Skilled Professional visa that can lead to permanent residence in as little as a year. High top tax rates, and Japanese is needed for daily life outside big international employers.",
+      "sections": {
+        "visa": "Highly Skilled Professional (HSP): a points system covering research, specialised or technical work, and business management. You need 70 points or more.\nFor the technical and business categories, an annual income below ¥3 million is not accepted.\nMost other professionals come on standard employer-sponsored work visas.",
+        "costs": "HSP status gives a 5-year period of stay. Fees are set by the Immigration Services Agency and your local embassy.",
+        "tax": "National income tax: 5% up to ¥1.95 million, rising through bands to 45% above ¥40 million, plus a 2.1% surtax on national tax.\nLocal inhabitant tax of a flat 10%. Combined top rate about 55.9%.",
+        "living": "Tokyo: about ¥140,986/month for a single person excluding rent; about ¥514,132 for a family of four. 1-bedroom rent about ¥202,375 (centre) or ¥109,456 (outside).",
+        "healthcare": "Residents must join public health insurance (through the employer, or National Health Insurance). Patients usually pay 30% of costs.",
+        "family": "HSP spouses can work full-time in qualifying jobs. Parents can join while you raise a child under 7, with household income of ¥8 million or more. A domestic helper is allowed with household income of ¥10 million or more.",
+        "residency": "Permanent residence after 3 years at 70 points, or 1 year at 80 points (other conditions apply)."
+      },
+      "sources": [
+        { "title": "Visa Japan — Highly Skilled Professional points", "url": "https://english.visajapan.jp/koudo_point1" },
+        { "title": "PwC Worldwide Tax Summaries — Japan", "url": "https://taxsummaries.pwc.com/japan/individual/taxes-on-personal-income" },
+        { "title": "Numbeo — Tokyo", "url": "https://www.numbeo.com/cost-of-living/in/Tokyo" }
+      ]
+    }
+  ]
+}

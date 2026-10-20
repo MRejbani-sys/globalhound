@@ -567,7 +567,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
           <span class="nav-icon">🔒</span><span>GCC Listings</span>
         </div>
         <div class="nav-item" onclick="showPage('countries', this)">
-          <span class="nav-icon">🌍</span><span>Countries</span>
+          <span class="nav-icon">🌍</span><span>Country Reports</span>
         </div>
         <div class="nav-item" onclick="showPage('weekly', this)">
           <span class="nav-icon">📰</span><span>Weekly Drop</span>
@@ -855,12 +855,16 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 
       <!-- ===================== PAGE: COUNTRIES ===================== -->
       <div class="page" id="page-countries">
-        <div class="page-title">Country Intelligence Manager <span class="badge badge-amber" style="font-size:10px;vertical-align:middle;">Demo data — not connected yet</span></div>
-        <div class="page-sub">Edit scores, tax levels, and data for each country profile</div>
+        <div class="page-title">Country Reports</div>
+        <div class="page-sub" id="countriesSub"></div>
+        <div style="display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap;">
+          <button class="btn btn-ghost" onclick="importReports()">⬇ Import researched reports</button>
+          <button class="btn btn-gold" id="publishAllBtn" onclick="publishAllCountries()" style="display:none;">✓ Publish all drafts</button>
+        </div>
         <div class="card">
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Country</th><th>Visa Ease</th><th>Safety</th><th>Business</th><th>Tax Level</th><th>Actions</th></tr></thead>
+              <thead><tr><th>Country</th><th>Status</th><th>Content</th><th>Ratings (visa / safety / business · tax)</th><th>Last checked</th><th>Actions</th></tr></thead>
               <tbody id="countriesAdminTbody"></tbody>
             </table>
           </div>
@@ -1262,6 +1266,7 @@ async function changeMyPassword() {
 
 // ===== DATA LOADING =====
 async function loadAll() {
+  await loadCountryRows();
   const [p, l, st] = await Promise.all([
     sb.from('profiles').select('*').order('created_at', { ascending: false }),
     sb.from('listings').select('*').order('created_at', { ascending: false }),
@@ -1304,6 +1309,8 @@ function renderOverview(st) {
   if (pending) alerts.push(`<div class="alert warning"><div class="alert-icon">🕵️</div><div class="alert-body"><div class="alert-title">${pending} listing${pending===1?'':'s'} waiting for your review</div><div class="alert-text">Found by the job agent or saved as pending. Nothing goes public until you approve it.</div></div><button class="btn btn-sm btn-ghost" onclick="showPage('review', document.getElementById('navReview'))" style="flex-shrink:0;">Review →</button></div>`);
   const wantsPaid = PROFILES.filter(p => p.requested_plan !== 'Free' && p.plan !== p.requested_plan).length;
   if (wantsPaid) alerts.push(`<div class="alert info"><div class="alert-icon">💳</div><div class="alert-body"><div class="alert-title">${wantsPaid} member${wantsPaid===1?'':'s'} asked for a paid plan</div><div class="alert-text">Payments aren't live yet. You can grant a plan manually from Registrations.</div></div><button class="btn btn-sm btn-ghost" onclick="showPage('registrations', document.getElementById('navReg'))" style="flex-shrink:0;">View →</button></div>`);
+  const updates = (COUNTRY_ROWS || []).filter(c => c.proposed_sections).length;
+  if (updates) alerts.push(`<div class="alert info"><div class="alert-icon">🌍</div><div class="alert-body"><div class="alert-title">${updates} country report update${updates===1?'':'s'} ready</div><div class="alert-text">The monthly check found changed figures. Review and apply them in Country Reports.</div></div><button class="btn btn-sm btn-ghost" onclick="showPage('countries', null)" style="flex-shrink:0;">Review →</button></div>`);
   if (!total) alerts.push(`<div class="alert info"><div class="alert-icon">👋</div><div class="alert-body"><div class="alert-title">No members yet</div><div class="alert-text">Sign-ups from the website will appear here automatically.</div></div></div>`);
   document.getElementById('overviewAlerts').innerHTML = alerts.join('');
 
@@ -1677,34 +1684,157 @@ function exportCSV(market) {
   URL.revokeObjectURL(a.href);
 }
 
-// ===== COUNTRIES (static for now) =====
-const COUNTRIES = [
-  { flag:'🇦🇪', name:'UAE', visa:8, safety:8, business:9, tax:'Low' },
-  { flag:'🇩🇪', name:'Germany', visa:7, safety:9, business:8, tax:'High' },
-  { flag:'🇨🇦', name:'Canada', visa:8, safety:9, business:8, tax:'Medium' },
-  { flag:'🇸🇬', name:'Singapore', visa:7, safety:10, business:10, tax:'Low' },
-  { flag:'🇵🇹', name:'Portugal', visa:9, safety:9, business:7, tax:'Medium' },
-  { flag:'🇳🇱', name:'Netherlands', visa:7, safety:9, business:8, tax:'High' },
-  { flag:'🇦🇺', name:'Australia', visa:6, safety:9, business:8, tax:'Medium' },
-  { flag:'🇸🇦', name:'Saudi Arabia', visa:6, safety:7, business:8, tax:'Low' },
-  { flag:'🇶🇦', name:'Qatar', visa:6, safety:8, business:8, tax:'Low' },
-  { flag:'🇬🇧', name:'UK', visa:5, safety:8, business:7, tax:'High' },
-  { flag:'🇳🇿', name:'New Zealand', visa:7, safety:9, business:7, tax:'Medium' },
-  { flag:'🇯🇵', name:'Japan', visa:5, safety:10, business:7, tax:'Medium' },
+// ===== COUNTRY REPORTS =====
+let COUNTRY_ROWS = [];
+const REPORT_KEYS = [
+  ['visa', 'Visa routes'], ['costs', 'Fees & processing'], ['tax', 'Income tax'], ['living', 'Cost of living'],
+  ['healthcare', 'Healthcare'], ['family', 'Bringing family'], ['residency', 'Long-term residence'],
 ];
+
+async function loadCountryRows() {
+  const { data, error } = await sb.from('countries').select('*').order('sort_order');
+  if (error) return fail(error, 'Could not load countries.');
+  COUNTRY_ROWS = data || [];
+  renderCountries();
+}
+
 function renderCountries() {
   const tb = document.getElementById('countriesAdminTbody');
   if (!tb) return;
-  const slider = (v, color) => `<div style="display:flex;align-items:center;gap:8px;"><input type="range" min="1" max="10" value="${v}" style="width:70px;accent-color:var(--${color});" disabled><span style="font-family:var(--font-mono);font-size:11px;color:var(--${color});width:20px;">${v}</span></div>`;
-  tb.innerHTML = COUNTRIES.map(c => `
-    <tr>
-      <td><strong>${c.flag} ${c.name}</strong></td>
-      <td>${slider(c.visa, 'gold')}</td>
-      <td>${slider(c.safety, 'green')}</td>
-      <td>${slider(c.business, 'blue')}</td>
-      <td>${c.tax}</td>
-      <td><span class="badge badge-dim">Coming soon</span></td>
-    </tr>`).join('');
+  const drafts = COUNTRY_ROWS.filter(c => c.status === 'draft' && Object.keys(c.sections || {}).length).length;
+  document.getElementById('publishAllBtn').style.display = drafts ? '' : 'none';
+  const empty = COUNTRY_ROWS.filter(c => !Object.keys(c.sections || {}).length).length;
+  setText('countriesSub', empty === COUNTRY_ROWS.length
+    ? 'No reports loaded yet. Click "Import researched reports" to load the drafts.'
+    : `${COUNTRY_ROWS.filter(c => c.status === 'published').length} published · ${drafts} draft${drafts === 1 ? '' : 's'} waiting · reports are visible to Starter and Pro members`);
+  tb.innerHTML = COUNTRY_ROWS.map(c => {
+    const n = Object.keys(c.sections || {}).length;
+    return `<tr>
+      <td><strong>${esc(c.flag)} ${esc(c.name)}</strong></td>
+      <td>${c.status === 'published' ? '<span class="badge badge-green">published</span>' : '<span class="badge badge-amber">draft</span>'}${c.proposed_sections ? ' <span class="badge badge-blue">update ready</span>' : ''}</td>
+      <td style="font-size:11px;color:var(--muted);">${n}/7 sections · ${(c.sources || []).length} sources</td>
+      <td style="font-family:var(--font-mono);font-size:11px;">${c.visa_ease ?? '—'} / ${c.safety ?? '—'} / ${c.business ?? '—'} · ${esc(c.tax_level || '—')}</td>
+      <td style="font-size:11px;color:var(--muted);">${c.last_checked ? fmtDate(c.last_checked) : '—'}</td>
+      <td>
+        ${c.proposed_sections ? `<button class="action-btn" onclick="reviewCountryUpdate('${esc(c.slug)}')">Review update</button>` : ''}
+        <button class="action-btn" onclick="openCountryModal('${esc(c.slug)}')">Edit</button>
+        ${n ? (c.status === 'published'
+          ? `<button class="action-btn" onclick="setCountryStatus('${esc(c.slug)}','draft')">Unpublish</button>`
+          : `<button class="action-btn" onclick="setCountryStatus('${esc(c.slug)}','published')">✓ Publish</button>`) : ''}
+        <a class="action-btn" style="text-decoration:none;" href="${window.location.origin}/#country=${esc(c.slug)}" target="_blank">Preview</a>
+      </td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="6" style="color:var(--muted);">No countries yet.</td></tr>';
+}
+
+async function setCountryStatus(slug, status) {
+  const { error } = await sb.from('countries').update({ status }).eq('slug', slug);
+  if (error) return fail(error, 'Could not update the report.');
+  showToast('✓', status === 'published' ? 'Report published for Starter and Pro members.' : 'Report moved back to draft.');
+  await loadCountryRows();
+}
+
+function publishAllCountries() {
+  const slugs = COUNTRY_ROWS.filter(c => c.status === 'draft' && Object.keys(c.sections || {}).length).map(c => c.slug);
+  openModal(`Publish ${slugs.length} reports?`, 'They will be visible to Starter and Pro members straight away. Summaries and ratings show to everyone.', async () => {
+    const { error } = await sb.from('countries').update({ status: 'published' }).in('slug', slugs);
+    if (error) return fail(error, 'Could not publish.');
+    showToast('✓', `${slugs.length} reports published.`);
+    await loadCountryRows();
+  });
+}
+
+function importReports() {
+  openModal('Import researched reports?', 'This loads the researched report text, sources and dates for each country in the research file, replacing the current text. Published reports stay published; others stay as drafts for you to review.', async () => {
+    let file;
+    try {
+      const r = await fetch('/data/country-reports.json', { cache: 'no-store' });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      file = await r.json();
+    } catch (e) { fail(e, 'Could not read the research file.'); return false; }
+    let ok = 0;
+    for (const c of file.countries || []) {
+      const { error } = await sb.from('countries').update({
+        summary: c.summary, sections: c.sections, sources: c.sources, last_checked: file.researched,
+      }).eq('slug', c.slug);
+      if (error) console.error(c.slug, error); else ok++;
+    }
+    showToast('✓', `Imported ${ok} of ${(file.countries || []).length} reports.`);
+    await loadCountryRows();
+  });
+}
+
+function reviewCountryUpdate(slug) {
+  const c = COUNTRY_ROWS.find(x => x.slug === slug);
+  const old = c.sections || {}, neu = c.proposed_sections || {};
+  const changed = REPORT_KEYS.filter(([k]) => (old[k] || '') !== (neu[k] || ''));
+  const body = `
+    <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:14px;">${esc(c.change_note || 'The monthly check proposed changes to this report.')}<br><span style="font-size:11px;">Proposed ${c.proposed_at ? ago(c.proposed_at) : ''}</span></p>
+    ${changed.map(([k, label]) => `
+      <div class="form-group"><label class="form-label">${label}</label>
+        <div style="font-size:12px;color:var(--red);white-space:pre-line;margin-bottom:6px;text-decoration:line-through;opacity:.8;">${esc(old[k] || '—')}</div>
+        <div style="font-size:12px;color:var(--green);white-space:pre-line;">${esc(neu[k] || '—')}</div></div>`).join('') || '<p style="font-size:13px;color:var(--muted);">Only the sources changed.</p>'}
+    <div style="margin-top:10px;"><button class="action-btn danger" onclick="dismissCountryUpdate('${esc(slug)}')">Dismiss this update</button></div>`;
+  openModal(`${c.flag || ''} ${c.name} — proposed update`, null, async () => {
+    const { error } = await sb.from('countries').update({
+      sections: neu, sources: c.proposed_sources || c.sources, last_checked: new Date().toISOString().slice(0, 10),
+      proposed_sections: null, proposed_sources: null, change_note: null, proposed_at: null,
+    }).eq('slug', slug);
+    if (error) return fail(error, 'Could not apply the update.');
+    showToast('✓', 'Report updated.');
+    await loadCountryRows();
+  }, body, 'Apply Update');
+}
+
+async function dismissCountryUpdate(slug) {
+  const { error } = await sb.from('countries').update({ proposed_sections: null, proposed_sources: null, change_note: null, proposed_at: null }).eq('slug', slug);
+  if (error) return fail(error, 'Could not dismiss.');
+  closeModal();
+  showToast('✓', 'Update dismissed.');
+  await loadCountryRows();
+}
+
+function openCountryModal(slug) {
+  const c = COUNTRY_ROWS.find(x => x.slug === slug);
+  const sec = c.sections || {};
+  const num = (id, label, v) => `<div class="form-group"><label class="form-label">${label} (1–10)</label><input class="form-input" type="number" min="1" max="10" id="${id}" value="${v ?? ''}"></div>`;
+  const body = `
+    <div class="form-group"><label class="form-label">Free summary (shown to everyone)</label><textarea class="form-textarea form-input" id="c_summary">${esc(c.summary)}</textarea></div>
+    <div class="form-row">${num('c_visa', 'Visa ease', c.visa_ease)}${num('c_safety', 'Safety', c.safety)}</div>
+    <div class="form-row">${num('c_business', 'Business climate', c.business)}
+      <div class="form-group"><label class="form-label">Tax level</label><select class="form-select" id="c_tax">${opt(['Low','Medium','High'], c.tax_level)}</select></div></div>
+    ${REPORT_KEYS.map(([k, label]) => `<div class="form-group"><label class="form-label">${label} — one point per line (Starter+)</label><textarea class="form-textarea form-input" id="c_${k}" style="min-height:110px;">${esc(sec[k])}</textarea></div>`).join('')}
+    <div class="form-group"><label class="form-label">Sources — one per line as: Title | https://…</label><textarea class="form-textarea form-input" id="c_sources" style="min-height:90px;">${esc((c.sources || []).map(s => `${s.title} | ${s.url}`).join('\n'))}</textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Last checked</label><input class="form-input" type="date" id="c_checked" value="${esc(c.last_checked)}"></div>
+      <div class="form-group"><label class="form-label">Status</label><select class="form-select" id="c_status">${opt(['draft','published'], c.status)}</select></div>
+    </div>
+    <div class="login-error" id="c_error" style="display:none;"></div>`;
+  openModal(`${c.flag || ''} ${c.name} report`, null, () => saveCountry(slug), body, 'Save Report');
+}
+
+async function saveCountry(slug) {
+  const v = id => (document.getElementById(id).value || '').trim();
+  const err = m => { const e = document.getElementById('c_error'); e.textContent = m; e.style.display = 'block'; return false; };
+  const score = id => { const n = parseInt(v(id), 10); return Number.isFinite(n) ? Math.min(10, Math.max(1, n)) : null; };
+  const sections = {};
+  REPORT_KEYS.forEach(([k]) => { const t = v('c_' + k); if (t) sections[k] = t; });
+  const sources = [];
+  for (const line of v('c_sources').split('\n').map(s => s.trim()).filter(Boolean)) {
+    const i = line.lastIndexOf('|');
+    const title = (i > -1 ? line.slice(0, i) : line).trim();
+    const url = (i > -1 ? line.slice(i + 1) : line).trim();
+    if (!safeUrl(url)) return err(`This source needs a link starting with https://: "${line}"`);
+    sources.push({ title: title || url, url });
+  }
+  const { error } = await sb.from('countries').update({
+    summary: v('c_summary') || null, visa_ease: score('c_visa'), safety: score('c_safety'), business: score('c_business'),
+    tax_level: v('c_tax') || null, sections, sources, last_checked: v('c_checked') || null, status: v('c_status'),
+  }).eq('slug', slug);
+  if (error) return err(error.message);
+  showToast('✓', 'Report saved.');
+  await loadCountryRows();
+  return true;
 }
 
 // ===== NAVIGATION =====
@@ -1714,7 +1844,7 @@ function showPage(page, el) {
   const target = document.getElementById('page-' + page);
   if (target) target.classList.add('active');
   if (el) el.classList.add('active');
-  const titles = { overview:'Dashboard Overview', analytics:'Analytics', users:'All Members', registrations:'New Registrations', subscriptions:'Subscriptions & Revenue', jobs:'Job Listings Manager', gcc:'GCC Listings Manager', review:'Pending Review', countries:'Country Intelligence', weekly:'Weekly Intelligence Drop', settings:'Settings', referrals:'Referral Programme' };
+  const titles = { overview:'Dashboard Overview', analytics:'Analytics', users:'All Members', registrations:'New Registrations', subscriptions:'Subscriptions & Revenue', jobs:'Job Listings Manager', gcc:'GCC Listings Manager', review:'Pending Review', countries:'Country Reports', weekly:'Weekly Intelligence Drop', settings:'Settings', referrals:'Referral Programme' };
   document.getElementById('topbarTitle').textContent = titles[page] || 'Admin';
 }
 

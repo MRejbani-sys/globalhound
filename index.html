@@ -1207,7 +1207,7 @@
   <div class="page-header">
     <span class="section-label">Intelligence Hub</span>
     <h1>Country Intelligence Hub</h1>
-    <p>Data-backed profiles on the best countries for relocation, visas, and career growth. Updated monthly.</p>
+    <p>Visa routes, salary thresholds, tax, living costs and the path to residence, from official sources. Summaries are free; full reports come with Starter.</p>
   </div>
 
   <section class="section">
@@ -1586,6 +1586,16 @@
   </section>
 </div>
 
+<!-- ===================== PAGE: COUNTRY REPORT ===================== -->
+<div class="page" id="page-country">
+  <section class="section" style="padding-top:110px;">
+    <div class="container" style="max-width:860px;">
+      <button class="btn btn-ghost btn-sm" onclick="navigate('countries')" style="margin-bottom:24px;">← Back to all countries</button>
+      <div id="countryDetail"><p style="color:var(--text-muted);">Loading…</p></div>
+    </div>
+  </section>
+</div>
+
 <!-- ===================== PAGE: CHECK EMAIL ===================== -->
 <div class="page" id="page-check-email">
   <div class="auth-page">
@@ -1643,21 +1653,6 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
   },
 });
 
-// ===== COUNTRY INTELLIGENCE (static for now) =====
-const COUNTRIES = [
-  { flag:'🇦🇪', name:'UAE', visaEase:8, tax:'Low', safety:8, business:9 },
-  { flag:'🇩🇪', name:'Germany', visaEase:7, tax:'High', safety:9, business:8 },
-  { flag:'🇨🇦', name:'Canada', visaEase:8, tax:'Medium', safety:9, business:8 },
-  { flag:'🇸🇬', name:'Singapore', visaEase:7, tax:'Low', safety:10, business:10 },
-  { flag:'🇵🇹', name:'Portugal', visaEase:9, tax:'Medium', safety:9, business:7 },
-  { flag:'🇳🇱', name:'Netherlands', visaEase:7, tax:'High', safety:9, business:8 },
-  { flag:'🇦🇺', name:'Australia', visaEase:6, tax:'Medium', safety:9, business:8 },
-  { flag:'🇸🇦', name:'Saudi Arabia', visaEase:6, tax:'Low', safety:7, business:8 },
-  { flag:'🇶🇦', name:'Qatar', visaEase:6, tax:'Low', safety:8, business:8 },
-  { flag:'🇬🇧', name:'United Kingdom', visaEase:5, tax:'High', safety:8, business:7 },
-  { flag:'🇳🇿', name:'New Zealand', visaEase:7, tax:'Medium', safety:9, business:7 },
-  { flag:'🇯🇵', name:'Japan', visaEase:5, tax:'Medium', safety:10, business:7 },
-];
 
 // ===== STATE =====
 let isLoggedIn = false;
@@ -1888,7 +1883,7 @@ async function loadListings() {
   buildJobFilters();
   filterJobs();
   renderGCC();
-  renderCountries();
+  loadCountries(); // plan may have changed, so refresh lock state too
 }
 
 function buildJobFilters() {
@@ -2110,7 +2105,19 @@ async function openJob(id) {
     </div>`;
 }
 
-// ===== RENDER COUNTRIES =====
+// ===== RENDER COUNTRIES (live from the database; full reports need Starter or Pro) =====
+let COUNTRIES = [];
+let countriesLoaded = false;
+const SECTION_TITLES = [
+  ['visa', '🛂 Visa routes'],
+  ['costs', '🧾 Fees & processing'],
+  ['tax', '💶 Income tax'],
+  ['living', '🏠 Cost of living'],
+  ['healthcare', '🩺 Healthcare'],
+  ['family', '👨‍👩‍👧 Bringing your family'],
+  ['residency', '🗝️ Long-term residence'],
+];
+
 function getBarColor(score) {
   if (score >= 8) return 'fill-green';
   if (score >= 6) return 'fill-gold';
@@ -2121,36 +2128,98 @@ function getTaxClass(t) {
   if (t === 'Medium') return 'chip-medium';
   return 'chip-high';
 }
+function fmtDate(d) {
+  return d ? new Date(d + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+}
+function metric(label, v) {
+  if (!v) return '';
+  return `<div class="metric">
+    <div class="metric-label"><span>${label}</span><span class="metric-val">${v}/10</span></div>
+    <div class="metric-bar"><div class="metric-fill ${getBarColor(v)}" style="width:${v * 10}%"></div></div>
+  </div>`;
+}
+
+async function loadCountries() {
+  const { data, error } = await sb.rpc('get_countries');
+  if (error) { console.error(error); return; }
+  COUNTRIES = data || [];
+  countriesLoaded = true;
+  renderCountries();
+}
 
 function renderCountries() {
   const grid = document.getElementById('countriesGrid');
+  if (!countriesLoaded) { grid.innerHTML = '<p style="color:var(--text-muted);">Loading countries…</p>'; return; }
   grid.innerHTML = COUNTRIES.map(c => `
-    <div class="country-card" onclick="${isLoggedIn ? `showToast('🌍','Full ${c.name} report coming soon.')` : "navigate('register')"}">
-      <div class="country-flag">${c.flag}</div>
-      <div class="country-name">${c.name}</div>
-      <div class="metric">
-        <div class="metric-label"><span>Visa Ease</span><span class="metric-val">${c.visaEase}/10</span></div>
-        <div class="metric-bar"><div class="metric-fill ${getBarColor(c.visaEase)}" style="width:${c.visaEase*10}%"></div></div>
-      </div>
-      <div class="metric">
-        <div class="metric-label"><span>Safety Rating</span><span class="metric-val">${c.safety}/10</span></div>
-        <div class="metric-bar"><div class="metric-fill ${getBarColor(c.safety)}" style="width:${c.safety*10}%"></div></div>
-      </div>
-      <div class="metric">
-        <div class="metric-label"><span>Business Climate</span><span class="metric-val">${c.business}/10</span></div>
-        <div class="metric-bar"><div class="metric-fill ${getBarColor(c.business)}" style="width:${c.business*10}%"></div></div>
-      </div>
+    <div class="country-card" onclick="openCountry('${esc(c.slug)}')">
+      <div class="country-flag">${esc(c.flag)}</div>
+      <div class="country-name">${esc(c.name)}</div>
+      ${c.summary ? `<p style="font-size:13px; color:var(--text-muted); line-height:1.6; margin:-4px 0 14px;">${esc(c.summary)}</p>` : ''}
+      ${metric('Visa Ease', c.visa_ease)}
+      ${metric('Safety Rating', c.safety)}
+      ${metric('Business Climate', c.business)}
       <div style="display:flex; align-items:center; justify-content:space-between; margin-top:12px;">
         <span style="font-size:12px; color:var(--text-dim);">Tax Level</span>
-        <span class="metric-chip ${getTaxClass(c.tax)}">${c.tax}</span>
+        ${c.tax_level ? `<span class="metric-chip ${getTaxClass(c.tax_level)}">${esc(c.tax_level)}</span>` : ''}
       </div>
       <div class="country-cta">
-        <button class="btn btn-outline-gold btn-sm w-full" onclick="event.stopPropagation(); ${isLoggedIn ? `showToast('🌍','Full ${c.name} report coming soon.')` : "navigate('register')"}">
-          ${isLoggedIn ? 'View Full Report' : '🔒 Members Only'}
+        <button class="btn btn-outline-gold btn-sm w-full" onclick="event.stopPropagation(); openCountry('${esc(c.slug)}')">
+          ${!c.has_report ? 'Report coming soon' : c.locked ? '🔒 Full report — Starter' : 'Read Full Report'}
         </button>
       </div>
+    </div>`).join('') || '<p style="color:var(--text-muted);">Country reports are being updated. Check back soon.</p>';
+}
+
+async function openCountry(slug) {
+  const box = document.getElementById('countryDetail');
+  box.innerHTML = '<p style="color:var(--text-muted);">Loading…</p>';
+  navigate('country');
+  const { data, error } = await sb.rpc('get_country_report', { p_slug: slug });
+  const c = data && data[0];
+  if (error || !c) {
+    box.innerHTML = '<div class="detail-card"><h2 style="font-family:var(--font-display);">Report not available yet</h2><p style="color:var(--text-muted);margin-top:8px;">This country report is being prepared. Check back soon.</p></div>';
+    return;
+  }
+  const facts = [
+    ['Region', c.region], ['Currency', c.currency], ['Languages', c.languages], ['Tax level', c.tax_level],
+  ].map(([k, v]) => v ? `<div class="detail-fact"><div class="k">${k}</div><div class="v" style="font-size:14px;">${esc(v)}</div></div>` : '').join('');
+  const header = `
+    <div style="display:flex; align-items:center; gap:14px;">
+      <div style="font-size:40px;">${esc(c.flag)}</div>
+      <div>
+        <div class="section-label" style="margin:0;">Country Intelligence Report</div>
+        <h1 style="font-family:var(--font-display); font-size:32px; line-height:1.15;">${esc(c.name)}</h1>
+      </div>
     </div>
-  `).join('');
+    ${c.summary ? `<p style="color:var(--text-muted); line-height:1.75; margin-top:16px; font-size:15px;">${esc(c.summary)}</p>` : ''}
+    <div class="detail-facts">${facts}</div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:4px 24px;">
+      ${metric('Visa Ease', c.visa_ease)}${metric('Safety Rating', c.safety)}${metric('Business Climate', c.business)}
+    </div>
+    <p style="font-size:11px; color:var(--text-dim); margin-top:6px;">Ratings are GlobalHound's editorial scores.</p>`;
+
+  if (c.locked) {
+    box.innerHTML = `<div class="detail-card">${header}
+      <div class="upgrade-box"><h3>🔒 Full report — Starter ${PLAN_PRICE.Starter}</h3>
+        <p>The full ${esc(c.name)} report covers visa routes and salary thresholds, fees and processing times, income tax bands, cost of living, healthcare, bringing your family, and the path to long-term residence, with links to every official source.</p>
+        ${unlockButton('starter', isLoggedIn ? 'Request Starter' : 'Create account & choose Starter')}</div></div>`;
+    return;
+  }
+  const sec = c.sections || {};
+  const body = SECTION_TITLES.filter(([k]) => sec[k]).map(([k, title]) => {
+    const lines = String(sec[k]).split('\n').map(s => s.trim()).filter(Boolean);
+    return `<div class="detail-section"><h3>${title}</h3>${lines.length > 1
+      ? `<ul style="margin:0; padding-left:18px; color:var(--text-muted); font-size:14px; line-height:1.75;">${lines.map(l => `<li style="margin-bottom:6px;">${esc(l)}</li>`).join('')}</ul>`
+      : `<p>${esc(lines[0] || '')}</p>`}</div>`;
+  }).join('');
+  const sources = (c.sources || []).map(s => {
+    const u = safeUrl(s.url);
+    return u ? `<li style="margin-bottom:4px;"><a href="${esc(u)}" target="_blank" rel="noopener" style="color:var(--gold);">${esc(s.title || u)}</a></li>` : '';
+  }).join('');
+  box.innerHTML = `<div class="detail-card">${header}${body}
+    ${sources ? `<div class="detail-section"><h3>📚 Sources</h3><ul style="margin:0; padding-left:18px; font-size:13px; line-height:1.7;">${sources}</ul></div>` : ''}
+    <p style="font-size:12px; color:var(--text-dim); margin-top:22px;">${c.last_checked ? `Last checked ${fmtDate(c.last_checked)}. ` : ''}Rules and fees change often. Always confirm with the official source before you apply.</p>
+  </div>`;
 }
 
 // ===== DASHBOARD TABS =====
@@ -2205,6 +2274,9 @@ sb.auth.onAuthStateChange((event, session) => {
       updateNavForAuth();
       await loadListings();
       authReady = true;
+      // Deep links from the admin's Preview buttons
+      const deep = window.location.hash.match(/^#(country|job)=([\w-]+)$/);
+      if (deep) { history.replaceState(null, '', window.location.pathname); deep[1] === 'country' ? openCountry(deep[2]) : openJob(Number(deep[2])); }
       // Arrived from an email confirmation link
       if (session && /type=signup|code=/.test(window.location.href)) {
         history.replaceState(null, '', window.location.pathname);
