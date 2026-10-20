@@ -1135,7 +1135,23 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 // ===== SUPABASE CONNECTION =====
 const SUPABASE_URL = 'https://erhvxwidikxtdpfiltfi.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_0rswCMEeZSBDzWmbic_-BQ_mv9LP3Qz';
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Session storage: browser storage first, with an in-page backup so a sign-in is never lost mid-task
+const memStore = {};
+const safeStorage = {
+  getItem: k => { let v = null; try { v = window.localStorage.getItem(k); } catch (e) {} return v !== null ? v : (k in memStore ? memStore[k] : null); },
+  setItem: (k, v) => { memStore[k] = v; try { window.localStorage.setItem(k, v); } catch (e) {} },
+  removeItem: k => { delete memStore[k]; try { window.localStorage.removeItem(k); } catch (e) {} },
+};
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    storage: safeStorage,
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    // Skip the cross-tab browser lock, which can leave a page without its session when several tabs are open
+    lock: async (name, acquireTimeout, fn) => await fn(),
+  },
+});
 
 // ===== STATE =====
 let ME = null;
